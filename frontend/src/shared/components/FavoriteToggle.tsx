@@ -1,23 +1,26 @@
-import { IconButton, Tooltip } from "@mui/material";
+// ✅ src/shared/components/FavoriteToggle.tsx
+import { IconButton } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
-import { useFavoriteStore } from "@/store/useFavoriteStore";
+import { useExerciseStore } from "@/store/useExerciseStore";
 
 interface Props {
   exerciseId: string;
 }
 
 export const FavoriteToggle = ({ exerciseId }: Props) => {
-  const { toggleFavorite, isFavorite } = useFavoriteStore();
+  const { favorites, toggleFavorite } = useExerciseStore();
+  const isFavorite = favorites.includes(exerciseId);
 
   return (
-    <Tooltip
-      title={
-        isFavorite(exerciseId) ? "Quitar de favoritos" : "Añadir a favoritos"
-      }
+    <IconButton
+      onClick={(e) => {
+        e.stopPropagation();
+        toggleFavorite(exerciseId);
+      }}
+      color={isFavorite ? "error" : "default"}
+      aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
     >
-      <IconButton onClick={() => toggleFavorite(exerciseId)} color="error">
-        {isFavorite(exerciseId) ? <Favorite /> : <FavoriteBorder />}
-      </IconButton>
-    </Tooltip>
+      {isFavorite ? <Favorite /> : <FavoriteBorder />}
+    </IconButton>
   );
 };

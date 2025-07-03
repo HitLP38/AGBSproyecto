@@ -1,3 +1,4 @@
+// ✅ src/shared/components/ExerciseCard.tsx
 import {
   Card,
   CardActionArea,
@@ -39,13 +40,12 @@ export const ExerciseCard = ({ id, name, image }: Props) => {
             alt={name}
             sx={{ objectFit: "cover" }}
           />
-
           <CardContent sx={{ textAlign: "center" }}>
             <Typography fontWeight={600}>{name}</Typography>
           </CardContent>
         </CardActionArea>
 
-        {/* ❤️ Botón de favorito externo y reutilizable */}
+        {/* ❤️ Favoritos */}
         <Box sx={{ position: "absolute", top: 4, right: 4 }}>
           <FavoriteToggle exerciseId={id} />
         </Box>

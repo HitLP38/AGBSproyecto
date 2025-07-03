@@ -1,61 +1,89 @@
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
-import { format } from "date-fns";
+// ✅ src/features/dashboard/components/NoteTable.tsx
+import { Box, Paper, Typography } from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { parseISO, isValid, format } from "date-fns";
+import { exercises } from "@/domain/exercise/data/exercises";
 import { ResultResponse } from "@/infra/api/resultsApi";
-import { useDashboardFilterStore } from "@/store/dashboardFilterStore";
-import { useExerciseStore } from "@/store/useExerciseStore";
-import { filterResults } from "../utils/filterResults";
 
 interface Props {
   results: ResultResponse[];
 }
 
 export const NoteTable = ({ results }: Props) => {
-  const { dateRange, selectedExercises, onlyFavorites } =
-    useDashboardFilterStore();
-  const { favorites, exercises } = useExerciseStore();
+  const columns: GridColDef[] = [
+    {
+      field: "exercise_id",
+      headerName: "Ejercicio",
+      flex: 1,
+      sortable: true,
+      valueGetter: (value, row) => {
+        if (!row || !row.exercise_id) return "-";
+        const ex = exercises.find((e) => e.id === row.exercise_id);
+        return ex?.name || row.exercise_id;
+      },
+    },
+    {
+      field: "value",
+      headerName: "Valor",
+      type: "number",
+      flex: 0.7,
+      sortable: true,
+    },
+    {
+      field: "score",
+      headerName: "Puntaje",
+      type: "number",
+      flex: 0.7,
+      sortable: true,
+    },
+    {
+      field: "timestamp",
+      headerName: "Fecha",
+      flex: 1,
+      sortable: true,
+      valueFormatter: (value) => {
+        if (!value) return "Sin fecha";
+        try {
+          const date = parseISO(value as string);
+          return isValid(date)
+            ? format(date, "dd/MM/yyyy HH:mm")
+            : "Fecha inválida";
+        } catch {
+          return "Fecha inválida";
+        }
+      },
+    },
+  ];
 
-  const filtered = filterResults(results, {
-    dateRange,
-    selectedExercises,
-    onlyFavorites,
-    favorites,
-  });
+  const validResults = results.filter((r) => r && typeof r === "object");
 
   return (
-    <TableContainer component={Paper} sx={{ mt: 4 }}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Ejercicio</TableCell>
-            <TableCell>Valor</TableCell>
-            <TableCell>Puntaje</TableCell>
-            <TableCell>Fecha</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {filtered.map((r) => {
-            const ex = exercises.find((e) => e.id === r.exercise_id);
-            return (
-              <TableRow key={r.id}>
-                <TableCell>{ex?.name || r.exercise_id}</TableCell>
-                <TableCell>{r.value}</TableCell>
-                <TableCell>{r.score}</TableCell>
-                <TableCell>
-                  {format(new Date(r.timestamp), "dd/MM/yyyy")}
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box mt={4}>
+      <Typography variant="h6" fontWeight={600} mb={2}>
+        Tabla de Notas
+      </Typography>
+
+      <Paper elevation={3} sx={{ height: 400, p: 2 }}>
+        <DataGrid
+          rows={validResults}
+          columns={columns}
+          getRowId={(row) => row.id}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 5, page: 0 },
+            },
+            sorting: {
+              sortModel: [{ field: "timestamp", sort: "desc" }],
+            },
+          }}
+          pageSizeOptions={[5, 10, 25]}
+          disableRowSelectionOnClick
+          disableColumnMenu={false}
+          localeText={{
+            noRowsLabel: "No hay datos disponibles para mostrar.",
+          }}
+        />
+      </Paper>
+    </Box>
   );
 };

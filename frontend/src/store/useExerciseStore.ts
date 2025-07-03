@@ -1,18 +1,20 @@
+// ✅ src/store/useExerciseStore.ts
 import { create } from "zustand";
-import { exercises as exerciseList } from "@/domain/exercise/data/exercises";
 
 interface ExerciseState {
   selected: string[];
   favorites: string[];
-  exercises: typeof exerciseList;
+  onlyFavorites: boolean;
   toggleSelect: (id: string) => void;
   toggleFavorite: (id: string) => void;
+  toggleOnlyFavorites: () => void;
 }
 
 export const useExerciseStore = create<ExerciseState>((set, get) => ({
   selected: [],
   favorites: [],
-  exercises: exerciseList,
+  onlyFavorites: false,
+
   toggleSelect: (id) => {
     const { selected } = get();
     set({
@@ -21,6 +23,7 @@ export const useExerciseStore = create<ExerciseState>((set, get) => ({
         : [...selected, id],
     });
   },
+
   toggleFavorite: (id) => {
     const { favorites } = get();
     set({
@@ -29,4 +32,7 @@ export const useExerciseStore = create<ExerciseState>((set, get) => ({
         : [...favorites, id],
     });
   },
+
+  toggleOnlyFavorites: () =>
+    set((state) => ({ onlyFavorites: !state.onlyFavorites })),
 }));

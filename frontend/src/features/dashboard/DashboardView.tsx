@@ -1,43 +1,53 @@
-import { Box, Container, Typography } from "@mui/material";
+import {
+  Box,
+  Container,
+  Typography,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+import { DashboardFilters } from "./components/DashboardFilters";
 import { SummaryCards } from "./components/SummaryCards";
+import { NoteTable } from "./components/NoteTable";
 import { ScoreChart } from "./components/ScoreChart";
 import { ProgressChart } from "./components/ProgressChart";
-import { NoteTable } from "./components/NoteTable";
+import { useFilteredResults } from "./hooks/useFilteredResults";
 
 export const DashboardView = () => {
+  const { filteredResults } = useFilteredResults();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" fontWeight={600} gutterBottom>
-        Tu progreso general
+      <Typography variant="h4" fontWeight={700} gutterBottom>
+        Dashboard de Rendimiento
       </Typography>
-      <DashboardFilters />
-      {/* 1. Cards resumen */}
-      <Box display="flex" flexWrap="wrap" gap={2} mb={4}>
-        <SummaryCards />
-      </Box>
 
-      {/* 2. Gráficos en fila */}
+      {/* Filtros */}
+      <DashboardFilters />
+
+      {/* Tarjetas resumen */}
+      <SummaryCards results={filteredResults} />
+
+      {/* Gráficos */}
       <Box
-        display="flex"
-        flexDirection={{ xs: "column", md: "row" }}
-        gap={2}
-        mb={4}
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          gap: 2,
+          mb: 4,
+        }}
       >
         <Box flex={1}>
-          <ScoreChart />
+          <ScoreChart results={filteredResults} />
         </Box>
         <Box flex={1}>
-          <ProgressChart />
+          <ProgressChart results={filteredResults} />
         </Box>
       </Box>
 
-      {/* 3. Tabla de notas */}
-      <Box>
-        <Typography variant="h6" fontWeight={600} mb={2}>
-          Tabla de Notas
-        </Typography>
-        <NoteTable />
-      </Box>
+      {/* Tabla de registros */}
+      <NoteTable results={filteredResults} />
     </Container>
   );
 };

@@ -1,3 +1,4 @@
+// ✅ src/shared/layout/HeaderSPA.tsx
 import {
   AppBar,
   Box,
@@ -9,7 +10,6 @@ import {
   useTheme,
 } from "@mui/material";
 import {
-  DarkMode,
   HelpOutline,
   Settings,
   AccountCircle,
@@ -17,22 +17,22 @@ import {
   FitnessCenter,
   BarChart,
   History,
+  Favorite,
 } from "@mui/icons-material";
 import { AnimatedIconButton } from "@/shared/ui/AnimatedIconButton";
-import { FavoritesButton } from "@/shared/components/FavoritesButton";
 import { useNavigationStore } from "@/store/navigationStore";
 import logo from "@/assets/logo.avif";
 import { UserButton, SignInButton, useUser } from "@clerk/clerk-react";
+import { useExerciseStore } from "@/store/useExerciseStore";
 
 export const HeaderSPA = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { setView, currentView } = useNavigationStore();
   const { user } = useUser();
-
+  const { onlyFavorites, toggleOnlyFavorites } = useExerciseStore();
   return (
     <AppBar position="static" elevation={0} className="inverted-header">
-      {/* Fila superior */}
       <Toolbar
         sx={{
           justifyContent: "space-between",
@@ -46,13 +46,14 @@ export const HeaderSPA = () => {
             RetoAGBS
           </Typography>
         </Stack>
-        <Stack direction="row" alignItems="center" spacing={1}>
-          {/* Opción 1: Si FavoritesButton debe recibir onClick */}
-          <FavoritesButton />
 
-          {/* Opción 2: Si FavoritesButton no necesita onClick, usa esto en su lugar:
-          <FavoritesButton />
-          */}
+        <Stack direction="row" alignItems="center" spacing={1}>
+          {/* ❤️ Favoritos */}
+          <AnimatedIconButton
+            tooltip="Favoritos"
+            icon={<Favorite color={onlyFavorites ? "error" : "inherit"} />}
+            onClick={toggleOnlyFavorites}
+          />
 
           {!isMobile && (
             <>
@@ -60,7 +61,7 @@ export const HeaderSPA = () => {
               <AnimatedIconButton tooltip="Configuración" icon={<Settings />} />
             </>
           )}
-          {/* Autenticación minimalista */}
+
           {!user ? (
             <SignInButton mode="modal">
               <AnimatedIconButton
@@ -73,7 +74,7 @@ export const HeaderSPA = () => {
           )}
         </Stack>
       </Toolbar>
-      {/* Menú horizontal solo en escritorio */}
+
       {!isMobile && (
         <Box
           sx={{ px: 2, pb: 1, display: "flex", gap: 2, alignItems: "center" }}

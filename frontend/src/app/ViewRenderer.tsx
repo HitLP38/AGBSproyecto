@@ -1,6 +1,6 @@
 import { useNavigationStore } from "@/store/navigationStore";
 import { HomeView } from "@/features/home/HomeView";
-import { ExercisesView } from "@/features/exercises/ExercisesView";
+import { ExerciseView } from "@/features/exercises/ExerciseView";
 import { ResultsView } from "@/features/results/ResultsView";
 import { DashboardView } from "@/features/dashboard/DashboardView";
 import { HistoryView } from "@/features/history/HistoryView";
@@ -13,7 +13,7 @@ export const ViewRenderer = () => {
     case "home":
       return <HomeView />;
     case "exercises":
-      return <ExercisesView />;
+      return <ExerciseView />;
     case "results":
       return <ResultsView />;
     case "dashboard":
@@ -21,6 +21,7 @@ export const ViewRenderer = () => {
     case "history":
       return <HistoryView />;
     case "welcome":
+      return <WelcomeView />;
     default:
       return <WelcomeView />;
   }

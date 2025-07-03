@@ -7,7 +7,8 @@ export type ViewName =
   | "dashboard"
   | "history"
   | "results"
-  | "profile";
+  | "profile"
+  | "favorites";
 
 interface NavigationState {
   currentView: ViewName;
