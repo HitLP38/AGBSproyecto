@@ -5,17 +5,39 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
+import { useUser, useAuth } from "@clerk/clerk-react";
+import { useEffect } from "react";
+
 import { DashboardFilters } from "./components/DashboardFilters";
 import { SummaryCards } from "./components/SummaryCards";
 import { NoteTable } from "./components/NoteTable";
 import { ScoreChart } from "./components/ScoreChart";
-import { ProgressChart } from "./components/ProgressChart";
+// import { ProgressChart } from "./components/ProgressChart";
+import { PerformanceRadar } from "./components/PerformanceRadar";
 import { useFilteredResults } from "./hooks/useFilteredResults";
+import { useResultStore } from "@/store/resultStore";
 
 export const DashboardView = () => {
+  const { user } = useUser();
+  const { getToken } = useAuth();
   const { filteredResults } = useFilteredResults();
+  const { fetchAll } = useResultStore();
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+  // ✅ Cargar resultados si se accede directo al dashboard
+  useEffect(() => {
+    const loadResults = async () => {
+      const token = await getToken();
+      const userId = user?.id;
+      if (token && userId) {
+        await fetchAll(userId, token);
+      }
+    };
+
+    loadResults();
+  }, [user, getToken, fetchAll]);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -42,7 +64,7 @@ export const DashboardView = () => {
           <ScoreChart results={filteredResults} />
         </Box>
         <Box flex={1}>
-          <ProgressChart results={filteredResults} />
+          <PerformanceRadar results={filteredResults} />
         </Box>
       </Box>
 

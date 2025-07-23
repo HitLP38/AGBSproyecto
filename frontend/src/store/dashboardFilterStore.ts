@@ -1,19 +1,28 @@
+// ✅ src/store/dashboardFilterStore.ts
 import { create } from "zustand";
 
-interface DashboardFilterStore {
+interface DashboardFilterState {
   dateRange: [Date | null, Date | null];
   selectedExercises: string[];
   onlyFavorites: boolean;
+  selectedSexo: string;
+  selectedGrado: string;
   setDateRange: (range: [Date | null, Date | null]) => void;
   setSelectedExercises: (ids: string[]) => void;
-  setOnlyFavorites: (value: boolean) => void;
+  setOnlyFavorites: (flag: boolean) => void;
+  setSelectedSexo: (sexo: string) => void;
+  setSelectedGrado: (grado: string) => void;
 }
 
-export const useDashboardFilterStore = create<DashboardFilterStore>((set) => ({
+export const useDashboardFilterStore = create<DashboardFilterState>((set) => ({
   dateRange: [null, null],
   selectedExercises: [],
   onlyFavorites: false,
-  setDateRange: (range) => set({ dateRange: range }),
-  setSelectedExercises: (ids) => set({ selectedExercises: ids }),
-  setOnlyFavorites: (value) => set({ onlyFavorites: value }),
+  selectedSexo: "",
+  selectedGrado: "",
+  setDateRange: (r) => set({ dateRange: r }),
+  setSelectedExercises: (v) => set({ selectedExercises: v }),
+  setOnlyFavorites: (v) => set({ onlyFavorites: v }),
+  setSelectedSexo: (s) => set({ selectedSexo: s }),
+  setSelectedGrado: (g) => set({ selectedGrado: g }),
 }));

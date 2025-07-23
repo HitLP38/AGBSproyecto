@@ -1,23 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.schemas.result import ResultCreate, ResultOut
-from app.services.result_service import create_result, get_results_by_user
-from app.db.session import SessionLocal
+from typing import List
 
-router = APIRouter(prefix="/results", tags=["results"])
+from app.schemas.result import ResultCreate, ResultResponse
+from app.services import result_service
+from app.db.session import get_db
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# ✅ Este es el router que necesitas exportar
+router = APIRouter()
 
-@router.post("/", response_model=ResultOut)
-def save_result(result: ResultCreate, db: Session = Depends(get_db)):
-    return create_result(db, result)
+@router.post("/", response_model=ResultResponse)
+def create_result(result: ResultCreate, db: Session = Depends(get_db)):
+    return result_service.create_result(db, result)
 
-@router.get("/", response_model=list[ResultOut])
-def fetch_results(user_id: str = Query(...), db: Session = Depends(get_db)):
-    return get_results_by_user(db, user_id)
+@router.get("/{user_id}", response_model=List[ResultResponse])
+def get_results(user_id: str, db: Session = Depends(get_db)):
+    return result_service.get_by_user(db, user_id=user_id)

@@ -1,9 +1,9 @@
 """Modelo de datos para resultados"""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import Column, String, Float, DateTime
 from app.db.session import Base
-
+import uuid
 class Result(Base):
     __tablename__ = "results"
 
@@ -13,3 +13,5 @@ class Result(Base):
     value = Column(Float)
     score = Column(Float)
     timestamp = Column(DateTime(timezone=True), default=datetime.utcnow)
+    sexo = Column(String)   # ✅ nuevo
+    grado = Column(String)  # ✅ nuevo

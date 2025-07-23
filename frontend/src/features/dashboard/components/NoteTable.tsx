@@ -37,6 +37,17 @@ export const NoteTable = ({ results }: Props) => {
       sortable: true,
     },
     {
+      field: "sexo",
+      headerName: "Sexo",
+      flex: 0.7,
+    },
+    {
+      field: "grado",
+      headerName: "Grado",
+      flex: 0.7,
+    },
+
+    {
       field: "timestamp",
       headerName: "Fecha",
       flex: 1,

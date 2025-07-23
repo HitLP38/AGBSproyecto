@@ -11,6 +11,7 @@ import {
   MenuItem,
   Select,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useState } from "react";
@@ -25,9 +26,13 @@ export const DashboardFilters = () => {
     dateRange,
     selectedExercises,
     onlyFavorites,
+    selectedSexo,
+    selectedGrado,
     setDateRange,
     setSelectedExercises,
     setOnlyFavorites,
+    setSelectedSexo,
+    setSelectedGrado,
   } = useDashboardFilterStore();
 
   const { favorites } = useExerciseStore();
@@ -121,6 +126,36 @@ export const DashboardFilters = () => {
                   ))}
                 </Select>
               </Box>
+
+              {/* ✅ Agrega debajo de select de ejercicios */}
+              <Box>
+                <Typography variant="body2" fontWeight={500} mb={1}>
+                  Sexo
+                </Typography>
+                <Select
+                  fullWidth
+                  value={selectedSexo}
+                  onChange={(e) => setSelectedSexo(e.target.value)}
+                  displayEmpty
+                >
+                  <MenuItem value="">Todos los sexos</MenuItem>
+                  <MenuItem value="Masculino">Masculino</MenuItem>
+                  <MenuItem value="Femenino">Femenino</MenuItem>
+                </Select>
+              </Box>
+
+              <TextField
+                select
+                label="Grado"
+                value={selectedGrado}
+                onChange={(e) => setSelectedGrado(e.target.value)}
+                fullWidth
+              >
+                <MenuItem value="">Todos los grados</MenuItem>
+                <MenuItem value="1">Grado 1</MenuItem>
+                <MenuItem value="2">Grado 2</MenuItem>
+                <MenuItem value="3">Grado 3</MenuItem>
+              </TextField>
 
               <FormControlLabel
                 control={

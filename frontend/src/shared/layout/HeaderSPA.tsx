@@ -24,6 +24,7 @@ import { useNavigationStore } from "@/store/navigationStore";
 import logo from "@/assets/logo.avif";
 import { UserButton, SignInButton, useUser } from "@clerk/clerk-react";
 import { useExerciseStore } from "@/store/useExerciseStore";
+import { Person } from "@mui/icons-material";
 
 export const HeaderSPA = () => {
   const theme = useTheme();
@@ -58,7 +59,11 @@ export const HeaderSPA = () => {
           {!isMobile && (
             <>
               <AnimatedIconButton tooltip="Ayuda" icon={<HelpOutline />} />
-              <AnimatedIconButton tooltip="Configuración" icon={<Settings />} />
+              <AnimatedIconButton
+                tooltip="Configuración"
+                icon={<Settings />}
+                onClick={() => setView("profile")}
+              />
             </>
           )}
 
@@ -71,6 +76,20 @@ export const HeaderSPA = () => {
             </SignInButton>
           ) : (
             <UserButton afterSignOutUrl="/" />
+          )}
+          {user && (
+            <>
+              <Button
+                onClick={() => setView("profile")}
+                startIcon={<AccountCircle />}
+              >
+                Perfil
+              </Button>
+
+              <Button onClick={() => setView("profile")} size="small">
+                Perfil
+              </Button>
+            </>
           )}
         </Stack>
       </Toolbar>

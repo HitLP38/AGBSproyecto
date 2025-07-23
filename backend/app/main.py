@@ -1,14 +1,15 @@
-"""Punto de entrada de la aplicación FastAPI para RetoAGBS"""
+# 📄 backend/app/main.py
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import router as api_router
 
-app = FastAPI(title="RetoAGBS API")
+app = FastAPI()
 
-# CORS (permitir frontend)
+# CORS: permite llamadas desde el frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # frontend Vite local
+    allow_origins=["*"],  # Cambia en producción
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

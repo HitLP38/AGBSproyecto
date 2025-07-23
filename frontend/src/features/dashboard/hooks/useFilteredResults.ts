@@ -9,8 +9,13 @@ export const useFilteredResults = (): {
   filteredResults: ResultResponse[];
 } => {
   const { records } = useResultStore();
-  const { dateRange, selectedExercises, onlyFavorites } =
-    useDashboardFilterStore();
+  const {
+    dateRange,
+    selectedExercises,
+    onlyFavorites,
+    selectedSexo,
+    selectedGrado,
+  } = useDashboardFilterStore();
   const { favorites } = useExerciseStore();
 
   const filteredResults = useMemo(() => {
@@ -39,9 +44,28 @@ export const useFilteredResults = (): {
         return false;
       }
 
+      // Filtro por sexo
+      if (selectedSexo && res.sexo !== selectedSexo) {
+        return false;
+      }
+
+      // Filtro por grado
+      const matchesGrado = !selectedGrado || res.grado === selectedGrado;
+      if (!matchesGrado) {
+        return false;
+      }
+
       return true;
     });
-  }, [records, dateRange, selectedExercises, onlyFavorites, favorites]);
+  }, [
+    records,
+    dateRange,
+    selectedExercises,
+    onlyFavorites,
+    selectedSexo,
+    selectedGrado,
+    favorites,
+  ]);
 
   return { filteredResults };
 };

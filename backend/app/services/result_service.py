@@ -13,11 +13,14 @@ def create_result(db: Session, result_data: ResultCreate) -> Result:
         score=result_data.score,
         timestamp=result_data.timestamp,
         user_id=result_data.user_id,
+        sexo=result_data.sexo,    # ✅ Añadido
+        grado=result_data.grado   # ✅ Añadido
     )
     db.add(db_result)
     db.commit()
     db.refresh(db_result)
     return db_result
+
 
 def get_by_user(db: Session, user_id: str) -> list[Result]:
     return db.query(Result).filter(Result.user_id == user_id).all()

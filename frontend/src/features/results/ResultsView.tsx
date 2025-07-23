@@ -1,4 +1,3 @@
-// ✅ src/features/results/ResultsView.tsx
 import {
   Box,
   Typography,
@@ -13,19 +12,23 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  MenuItem,
 } from "@mui/material";
 import { useExerciseStore } from "@/store/useExerciseStore";
 import { useNavigationStore } from "@/store/navigationStore";
 import { useResultStore } from "@/store/resultStore";
+import { useResultPreviewStore } from "@/store/resultPreviewStore";
 import { useEffect, useState } from "react";
 import { exercises } from "@/domain/exercise/data/exercises";
-import { calculateScore } from "@/domain/score/scoreCalculator";
 import { useUser, useAuth } from "@clerk/clerk-react";
+import { ResultPreviewTable } from "./components/ResultPreviewTable";
+import { getScoreFromBackend } from "@/infra/api/resultsApi";
 
 export const ResultsView = () => {
   const { selected } = useExerciseStore();
   const { setView } = useNavigationStore();
   const { saveResult } = useResultStore();
+  const { setData, data, clear } = useResultPreviewStore();
   const { getToken } = useAuth();
   const { user } = useUser();
 
@@ -33,54 +36,72 @@ export const ResultsView = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [formData, setFormData] = useState<Record<string, number>>({});
-  const [scores, setScores] = useState<Record<string, number>>({});
+  const [sexo, setSexo] = useState("");
+  const [grado, setGrado] = useState("");
   const [error, setError] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [readyToPreview, setReadyToPreview] = useState(false);
+  const [successDialog, setSuccessDialog] = useState(false);
 
   const handleChange = (id: string, value: number) => {
     setFormData((prev) => ({ ...prev, [id]: value }));
-    const score = calculateScore(id, value);
-    setScores((prev) => ({ ...prev, [id]: score }));
   };
 
-  const handleSubmit = async () => {
+  const handleCalculate = async () => {
     const allFilled = selected.every(
       (id) => formData[id] !== undefined && formData[id] > 0
     );
-    if (!allFilled) {
+    if (!allFilled || !sexo || !grado) {
       setError(true);
       return;
     }
+
+    const tokenTimestamp = new Date().toISOString();
+    const userId = user?.id ?? "anon";
+    const token = await getToken();
+
+    const previewPromises = selected.map(async (id) => {
+      const ex = exercises.find((e) => e.id === id)!;
+      const value = formData[id];
+
+      const score = await getScoreFromBackend(
+        id,
+        value,
+        sexo,
+        grado
+        //token || ""
+      );
+
+      return {
+        exercise_id: id,
+        exercise_name: ex.name,
+        value,
+        score,
+        maxValue: ex.maxValue,
+        maxScore: ex.maxScore,
+        timestamp: tokenTimestamp,
+        user_id: userId,
+        sexo,
+        grado,
+      };
+    });
+
+    const previewData = await Promise.all(previewPromises);
+    setData(previewData);
+    setReadyToPreview(true);
     setError(false);
-
-    try {
-      const token = await getToken();
-      const userId = user?.id ?? "anon";
-
-      for (const id of selected) {
-        const value = formData[id];
-        const score = scores[id];
-
-        await saveResult(
-          {
-            exercise_id: id,
-            value,
-            score,
-            timestamp: new Date().toISOString(),
-            user_id: userId,
-          },
-          token || ""
-        );
-      }
-
-      setShowSuccess(true);
-    } catch (err) {
-      console.error("❌ Error al guardar resultado:", err);
-    }
   };
 
-  const handleContinue = () => {
-    setShowSuccess(false);
+  const handleSave = async () => {
+    const token = await getToken();
+    for (const item of data) {
+      await saveResult(item, token || "");
+    }
+    clear();
+    setSuccessDialog(true);
+  };
+
+  const handleGoToDashboard = () => {
+    setSuccessDialog(false);
     setView("dashboard");
   };
 
@@ -100,12 +121,38 @@ export const ResultsView = () => {
         </Alert>
       )}
 
+      <Box display="flex" flexWrap="wrap" gap={3}>
+        <TextField
+          select
+          label="Sexo"
+          value={sexo}
+          onChange={(e) => setSexo(e.target.value)}
+          sx={{ minWidth: 160 }}
+        >
+          <MenuItem value="Masculino">Masculino</MenuItem>
+          <MenuItem value="Femenino">Femenino</MenuItem>
+        </TextField>
+
+        <TextField
+          select
+          label="Grado"
+          value={grado}
+          onChange={(e) => setGrado(e.target.value)}
+          sx={{ minWidth: 160 }}
+        >
+          <MenuItem value="1">Grado 1</MenuItem>
+          <MenuItem value="2">Grado 2</MenuItem>
+          <MenuItem value="3">Grado 3</MenuItem>
+        </TextField>
+      </Box>
+
       <Box
         sx={{
           display: "flex",
           flexWrap: "wrap",
           gap: 3,
           justifyContent: "flex-start",
+          mt: 3,
         }}
       >
         {selected.map((id) => {
@@ -128,35 +175,50 @@ export const ResultsView = () => {
                   label={
                     ex.type === "time"
                       ? "Tiempo en segundos"
+                      : ex.type === "distance"
+                      ? "Tiempo en segundos"
                       : "Cantidad de repeticiones"
                   }
                   value={formData[id] ?? ""}
                   onChange={(e) => handleChange(id, parseFloat(e.target.value))}
                 />
-
-                {scores[id] !== undefined && (
-                  <Typography mt={2}>
-                    🏅 Puntaje provisional: <strong>{scores[id]} / 20</strong>
-                  </Typography>
-                )}
               </Paper>
             </Box>
           );
         })}
       </Box>
 
-      <Box textAlign="center" mt={4}>
-        <Button
-          variant="contained"
-          size="large"
-          onClick={handleSubmit}
-          sx={{ borderRadius: 3, textTransform: "none", fontWeight: 600 }}
-        >
-          Guardar resultados
-        </Button>
-      </Box>
+      {!readyToPreview ? (
+        <Box textAlign="center" mt={4}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={handleCalculate}
+            sx={{ borderRadius: 3, textTransform: "none", fontWeight: 600 }}
+          >
+            Calcular Resultados
+          </Button>
+        </Box>
+      ) : (
+        <>
+          <Box mt={4}>
+            <ResultPreviewTable data={data} />
+          </Box>
+          <Box textAlign="center" mt={3}>
+            <Button
+              variant="contained"
+              size="large"
+              color="success"
+              onClick={handleSave}
+              sx={{ borderRadius: 3, textTransform: "none", fontWeight: 600 }}
+            >
+              Guardar Resultados
+            </Button>
+          </Box>
+        </>
+      )}
 
-      <Dialog open={showSuccess} onClose={handleContinue}>
+      <Dialog open={successDialog} onClose={handleGoToDashboard}>
         <DialogTitle>✅ ¡Resultados guardados!</DialogTitle>
         <DialogContent>
           <Typography>
@@ -165,7 +227,11 @@ export const ResultsView = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleContinue} variant="contained" color="primary">
+          <Button
+            onClick={handleGoToDashboard}
+            variant="contained"
+            color="primary"
+          >
             Ir al Dashboard
           </Button>
         </DialogActions>
