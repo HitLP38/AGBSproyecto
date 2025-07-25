@@ -1,3 +1,5 @@
+//src/domain/exercise/data/exercises.ts
+
 export interface Exercise {
   id: string;
   name: string;
@@ -15,7 +17,8 @@ export const exercises: Exercise[] = [
     maxScore: 20,
   },
   {
-    id: "extensiones-brazos",
+    // ✅ CORREGIDO: Cambié de "extensiones-brazos" a "extensiones-brazo"
+    id: "extensiones-brazo",
     name: "Extensiones de Brazos",
     type: "reps",
     maxValue: 60, // repeticiones para 20 pts (ejemplo)
@@ -43,7 +46,8 @@ export const exercises: Exercise[] = [
     maxScore: 20,
   },
   {
-    id: "6km",
+    // ✅ CORREGIDO: Cambié de "6km" a "6Km"
+    id: "6Km",
     name: "6 KM",
     type: "time",
     maxValue: 1320, // 22 minutos para 20 pts

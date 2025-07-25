@@ -1,28 +1,43 @@
+# app/services/note_service.py
+
+from typing import List
 from sqlalchemy.orm import Session
-from app.models.note_conversion import NoteConversion
+from app.db.crud.note_results import create_note_result
+from app.models.note_result import NoteResult
 
-def get_final_grade(total_score: int, db: Session) -> float | None:
-    """
-    Retorna la nota final correspondiente a la suma total del puntaje de los 6 ejercicios.
 
-    Si no existe una nota exacta en la tabla, busca el puntaje inmediatamente inferior.
+def get_final_grade(puntaje: int) -> float:
+    if puntaje < 6:
+        return 0.0
+    elif puntaje >= 240:
+        return 10.0
+    elif puntaje == 239:
+        return 9.9992
+    elif puntaje == 238:
+        return 9.977
+    else:
+        return round(5 + (puntaje - 6) * 0.0215, 4)
 
-    Args:
-        total_score (int): Puntaje total (de 0 a 240).
-        db (Session): Sesión de base de datos.
 
-    Returns:
-        float | None: Nota final si existe una conversión, o None si no se encuentra.
-    """
-    # Buscar la nota exacta
-    conversion = (
-        db.query(NoteConversion)
-        .filter(NoteConversion.total_score <= total_score)
-        .order_by(NoteConversion.total_score.desc())
-        .first()
+def procesar_y_guardar_nota(
+    db: Session,
+    user_id: str,
+    grado: int,
+    sexo: str,
+    puntajes: List[int],
+) -> NoteResult:
+    if len(puntajes) != 6:
+        raise ValueError("Se requieren exactamente 6 puntajes para calcular la nota.")
+
+    puntaje_total = sum(puntajes)
+    nota_final = get_final_grade(puntaje_total)
+
+    return create_note_result(
+        db=db,
+        user_id=user_id,
+        grado=grado,
+        sexo=sexo,
+        puntajes=puntajes,
+        puntaje_total=puntaje_total,
+        nota_final=nota_final
     )
-
-    if conversion:
-        return conversion.final_grade
-
-    return None

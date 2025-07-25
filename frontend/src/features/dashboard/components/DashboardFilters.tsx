@@ -139,8 +139,8 @@ export const DashboardFilters = () => {
                   displayEmpty
                 >
                   <MenuItem value="">Todos los sexos</MenuItem>
-                  <MenuItem value="Masculino">Masculino</MenuItem>
-                  <MenuItem value="Femenino">Femenino</MenuItem>
+                  <MenuItem value="H">Masculino</MenuItem>
+                  <MenuItem value="M">Femenino</MenuItem>
                 </Select>
               </Box>
 

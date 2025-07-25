@@ -13,7 +13,7 @@ import { useUser, useClerk } from "@clerk/clerk-react";
 import { useProfileStore } from "@/store/userProfileStore";
 
 const grados = ["Cadete", "Suboficial", "Oficial", "Reserva"];
-const sexos = ["Masculino", "Femenino"];
+const sexos = ["H", "M"];
 
 export const ProfileView = () => {
   const { user } = useUser();

@@ -1,8 +1,9 @@
+//src/infra/api/resultsApi.ts
 const API_URL = import.meta.env.VITE_API_URL;
 
 export interface ResultInput {
   exercise_id: string;
-  value: number;
+  value: number | string;
   score: number;
   timestamp: string;
   user_id: string;
@@ -52,28 +53,26 @@ export async function getResultsByUser(
   return await res.json();
 }
 
-// ✅ GET /score?exercise_id=xxx&marca=yy&sexo=M&grado=1
+// ✅ POST /score — calcula puntaje oficial desde el backend
 export async function getScoreFromBackend(
   exerciseId: string,
-  value: number,
+  value: number | string,
   sexo: string,
   grado: string
 ): Promise<number> {
-  // Convertir "Masculino"/"Femenino" a "M"/"F"
-  const sexoCode = sexo === "Masculino" ? "M" : "F";
-
-  const params = new URLSearchParams({
+  const payload = {
     exercise_id: exerciseId,
-    marca: value.toString(), // Cambiar 'value' por 'marca'
-    sexo: sexoCode, // Usar código corto
-    grado,
-  });
+    marca: value.toString(), // 👈 asegúrate de que sea string
+    sexo: sexo,
+    grado: parseInt(grado, 10), // 👈 aseguramos que sea número
+  };
 
-  const res = await fetch(`${API_URL}/score?${params.toString()}`, {
-    method: "GET",
+  const res = await fetch(`${API_URL}/score/`, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
@@ -82,7 +81,7 @@ export async function getScoreFromBackend(
   }
 
   const json = await res.json();
-  console.log("Response from API:", json); // Para debuggear - puedes quitarlo después
-  return json; // Si tu API retorna directamente el número
-  // Si tu API retorna {score: number}, cambia por: return json.score;
+
+  // ✅ Asegúrate que tu backend devuelva directamente un número. Si devuelve un objeto, ajusta esta línea:
+  return typeof json === "number" ? json : json.puntaje;
 }

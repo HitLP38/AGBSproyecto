@@ -829,7 +829,7 @@ INSERT INTO score_reference (exercise_id, sexo, grado, marca, puntaje) VALUES
 -- MUJERES (M)
 INSERT INTO score_reference (exercise_id, sexo, grado, marca, puntaje) VALUES
  ('6Km', 'M', 3, '25:00', 40),
- ('6Km', 'M', 3, '25:15', 40),
+ ('6Km', 'M', 3, '25:15', 39),
  ('6Km', 'M', 3, '25:30', 38),
  ('6Km', 'M', 3, '25:45', 36),
  ('6Km', 'M', 3, '26:00', 34),
@@ -877,7 +877,7 @@ INSERT INTO score_reference (exercise_id, sexo, grado, marca, puntaje) VALUES
 -- HOMBRES (H)
 INSERT INTO score_reference (exercise_id, sexo, grado, marca, puntaje) VALUES
  ('6Km', 'H', 3, '21:00', 40),
- ('6Km', 'H', 3, '21:15', 40),
+ ('6Km', 'H', 3, '21:15', 39),
  ('6Km', 'H', 3, '21:30', 38),
  ('6Km', 'H', 3, '21:45', 36),
  ('6Km', 'H', 3, '22:00', 34),

@@ -17,7 +17,8 @@ class ScoreReference(Base):
     
     # Marca registrada (en segundos, cm o repeticiones según el ejercicio)
     # Puede representarse como float (e.g. 6.8 seg), entero (50 rep) o segundos (para 6km o 1000m)
-    marca = Column(Float, index=True)
+    marca = Column(String(15), index=True)
+
     
     # Puntaje oficial asociado a esa marca (de 0 a 40)
     puntaje = Column(Integer)

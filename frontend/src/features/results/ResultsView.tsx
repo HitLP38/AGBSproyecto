@@ -1,3 +1,4 @@
+//features/results/ResultsView.tsx
 import {
   Box,
   Typography,
@@ -24,6 +25,29 @@ import { useUser, useAuth } from "@clerk/clerk-react";
 import { ResultPreviewTable } from "./components/ResultPreviewTable";
 import { getScoreFromBackend } from "@/infra/api/resultsApi";
 
+function normalizarMarca(exercise_id: string, valor: number | string): string {
+  const ejerciciosTiempo = ["6Km", "1000m", "natacion-50m"];
+
+  if (ejerciciosTiempo.includes(exercise_id)) {
+    const num =
+      typeof valor === "string" ? convertirTiempoANumero(valor) : valor;
+    const minutos = Math.floor(num);
+    const segundos = Math.round((num - minutos) * 60);
+    return `${minutos}:${segundos.toString().padStart(2, "0")}`;
+  }
+
+  return Number(valor).toString(); // devuelve como string limpio
+}
+
+// Función para convertir tiempo "mm:ss" a número decimal
+function convertirTiempoANumero(tiempo: string): number {
+  if (tiempo.includes(":")) {
+    const [min, seg] = tiempo.split(":").map(Number);
+    return min + seg / 60;
+  }
+  return Number(tiempo);
+}
+
 export const ResultsView = () => {
   const { selected } = useExerciseStore();
   const { setView } = useNavigationStore();
@@ -35,21 +59,41 @@ export const ResultsView = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const [formData, setFormData] = useState<Record<string, number>>({});
+  // Cambiar el tipo para que solo maneje strings
+  const [formData, setFormData] = useState<Record<string, string>>({});
+
   const [sexo, setSexo] = useState("");
   const [grado, setGrado] = useState("");
   const [error, setError] = useState(false);
   const [readyToPreview, setReadyToPreview] = useState(false);
   const [successDialog, setSuccessDialog] = useState(false);
 
-  const handleChange = (id: string, value: number) => {
+  // Cambiar el tipo del parámetro value a string
+  const handleChange = (id: string, value: string) => {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleCalculate = async () => {
-    const allFilled = selected.every(
-      (id) => formData[id] !== undefined && formData[id] > 0
-    );
+    // Validar que todos los campos estén llenos y tengan valores válidos
+    const allFilled = selected.every((id) => {
+      const value = formData[id];
+      if (!value || value.trim() === "") return false;
+
+      // Para ejercicios de tiempo con formato mm:ss
+      const ejerciciosTiempo = ["6Km", "1000m", "natacion-50m"];
+      if (ejerciciosTiempo.includes(id)) {
+        // Validar formato mm:ss o que sea un número válido
+        if (value.includes(":")) {
+          const [min, seg] = value.split(":");
+          return !isNaN(Number(min)) && !isNaN(Number(seg)) && Number(seg) < 60;
+        }
+        return !isNaN(Number(value)) && Number(value) > 0;
+      }
+
+      // Para otros ejercicios, validar que sea un número positivo
+      return !isNaN(Number(value)) && Number(value) > 0;
+    });
+
     if (!allFilled || !sexo || !grado) {
       setError(true);
       return;
@@ -61,8 +105,15 @@ export const ResultsView = () => {
 
     const previewPromises = selected.map(async (id) => {
       const ex = exercises.find((e) => e.id === id)!;
-      const value = formData[id];
+      const rawStringValue = formData[id];
 
+      // Convertimos a número decimal si es necesario
+      const ejerciciosTiempo = ["6Km", "1000m", "natacion-50m"];
+      const rawValue = ejerciciosTiempo.includes(id)
+        ? convertirTiempoANumero(rawStringValue)
+        : Number(rawStringValue);
+
+      const value = normalizarMarca(id, rawValue);
       const score = await getScoreFromBackend(
         id,
         value,
@@ -129,8 +180,8 @@ export const ResultsView = () => {
           onChange={(e) => setSexo(e.target.value)}
           sx={{ minWidth: 160 }}
         >
-          <MenuItem value="Masculino">Masculino</MenuItem>
-          <MenuItem value="Femenino">Femenino</MenuItem>
+          <MenuItem value="H">Masculino</MenuItem>
+          <MenuItem value="M">Femenino</MenuItem>
         </TextField>
 
         <TextField
@@ -171,16 +222,20 @@ export const ResultsView = () => {
 
                 <TextField
                   fullWidth
-                  type="number"
+                  type={
+                    ["6Km", "1000m", "natacion-50m"].includes(ex.id)
+                      ? "text"
+                      : "number"
+                  }
                   label={
-                    ex.type === "time"
-                      ? "Tiempo en segundos"
-                      : ex.type === "distance"
-                      ? "Tiempo en segundos"
-                      : "Cantidad de repeticiones"
+                    ex.type === "reps"
+                      ? "Cantidad de repeticiones"
+                      : ["6Km", "1000m", "natacion-50m"].includes(ex.id)
+                      ? "Tiempo en formato mm:ss"
+                      : "Tiempo en segundos"
                   }
                   value={formData[id] ?? ""}
-                  onChange={(e) => handleChange(id, parseFloat(e.target.value))}
+                  onChange={(e) => handleChange(id, e.target.value)}
                 />
               </Paper>
             </Box>
