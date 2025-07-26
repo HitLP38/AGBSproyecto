@@ -1,5 +1,6 @@
 // ✅ src/store/useExerciseStore.ts
 import { create } from "zustand";
+import { exercises } from "@/domain/exercise/data/exercises";
 
 interface ExerciseState {
   selected: string[];
@@ -8,6 +9,7 @@ interface ExerciseState {
   toggleSelect: (id: string) => void;
   toggleFavorite: (id: string) => void;
   toggleOnlyFavorites: () => void;
+  selectAll: () => void; // ✅ NUEVA
 }
 
 export const useExerciseStore = create<ExerciseState>((set, get) => ({
@@ -35,4 +37,10 @@ export const useExerciseStore = create<ExerciseState>((set, get) => ({
 
   toggleOnlyFavorites: () =>
     set((state) => ({ onlyFavorites: !state.onlyFavorites })),
+
+  // ✅ IMPLEMENTACIÓN DE selectAll
+  selectAll: () => {
+    const allExerciseIds = exercises.map((exercise) => exercise.id);
+    set({ selected: allExerciseIds });
+  },
 }));

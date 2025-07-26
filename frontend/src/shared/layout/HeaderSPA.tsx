@@ -114,11 +114,16 @@ export const HeaderSPA = () => {
           </Button>
           <Button
             startIcon={<FitnessCenter />}
-            variant={currentView === "exercises" ? "contained" : "text"}
-            onClick={() => setView("exercises")}
+            variant={
+              currentView === (isMobile ? "results" : "exercises")
+                ? "contained"
+                : "text"
+            }
+            onClick={() => setView(isMobile ? "results" : "exercises")}
           >
             Ejercicios
           </Button>
+
           <Button
             startIcon={<History />}
             variant={currentView === "history" ? "contained" : "text"}

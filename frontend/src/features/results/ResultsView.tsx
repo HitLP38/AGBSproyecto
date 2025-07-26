@@ -1,19 +1,17 @@
-//features/results/ResultsView.tsx
 import {
   Box,
   Typography,
-  TextField,
   Container,
-  Paper,
   Alert,
   Button,
-  useTheme,
-  useMediaQuery,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  TextField,
   MenuItem,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { useExerciseStore } from "@/store/useExerciseStore";
 import { useNavigationStore } from "@/store/navigationStore";
@@ -24,10 +22,11 @@ import { exercises } from "@/domain/exercise/data/exercises";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { ResultPreviewTable } from "./components/ResultPreviewTable";
 import { getScoreFromBackend } from "@/infra/api/resultsApi";
+import { ExerciseSelector } from "./components/ExerciseSelector";
+import { ExerciseDisplay } from "./components/ExerciseDisplay";
 
 function normalizarMarca(exercise_id: string, valor: number | string): string {
   const ejerciciosTiempo = ["6Km", "1000m", "natacion-50m"];
-
   if (ejerciciosTiempo.includes(exercise_id)) {
     const num =
       typeof valor === "string" ? convertirTiempoANumero(valor) : valor;
@@ -35,11 +34,9 @@ function normalizarMarca(exercise_id: string, valor: number | string): string {
     const segundos = Math.round((num - minutos) * 60);
     return `${minutos}:${segundos.toString().padStart(2, "0")}`;
   }
-
-  return Number(valor).toString(); // devuelve como string limpio
+  return Number(valor).toString();
 }
 
-// Función para convertir tiempo "mm:ss" a número decimal
 function convertirTiempoANumero(tiempo: string): number {
   if (tiempo.includes(":")) {
     const [min, seg] = tiempo.split(":").map(Number);
@@ -49,48 +46,45 @@ function convertirTiempoANumero(tiempo: string): number {
 }
 
 export const ResultsView = () => {
-  const { selected } = useExerciseStore();
+  const { selected, toggleSelect } = useExerciseStore();
   const { setView } = useNavigationStore();
   const { saveResult } = useResultStore();
   const { setData, data, clear } = useResultPreviewStore();
   const { getToken } = useAuth();
   const { user } = useUser();
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  // Cambiar el tipo para que solo maneje strings
   const [formData, setFormData] = useState<Record<string, string>>({});
-
   const [sexo, setSexo] = useState("");
   const [grado, setGrado] = useState("");
   const [error, setError] = useState(false);
   const [readyToPreview, setReadyToPreview] = useState(false);
   const [successDialog, setSuccessDialog] = useState(false);
 
-  // Cambiar el tipo del parámetro value a string
   const handleChange = (id: string, value: string) => {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
+  // Handler para el selector de ejercicios
+  const handleExerciseSelectionChange = (exerciseId: string) => {
+    if (exerciseId) {
+      toggleSelect(exerciseId);
+    }
+  };
+
   const handleCalculate = async () => {
-    // Validar que todos los campos estén llenos y tengan valores válidos
     const allFilled = selected.every((id) => {
       const value = formData[id];
       if (!value || value.trim() === "") return false;
-
-      // Para ejercicios de tiempo con formato mm:ss
       const ejerciciosTiempo = ["6Km", "1000m", "natacion-50m"];
       if (ejerciciosTiempo.includes(id)) {
-        // Validar formato mm:ss o que sea un número válido
         if (value.includes(":")) {
           const [min, seg] = value.split(":");
           return !isNaN(Number(min)) && !isNaN(Number(seg)) && Number(seg) < 60;
         }
         return !isNaN(Number(value)) && Number(value) > 0;
       }
-
-      // Para otros ejercicios, validar que sea un número positivo
       return !isNaN(Number(value)) && Number(value) > 0;
     });
 
@@ -106,22 +100,12 @@ export const ResultsView = () => {
     const previewPromises = selected.map(async (id) => {
       const ex = exercises.find((e) => e.id === id)!;
       const rawStringValue = formData[id];
-
-      // Convertimos a número decimal si es necesario
       const ejerciciosTiempo = ["6Km", "1000m", "natacion-50m"];
       const rawValue = ejerciciosTiempo.includes(id)
         ? convertirTiempoANumero(rawStringValue)
         : Number(rawStringValue);
-
       const value = normalizarMarca(id, rawValue);
-      const score = await getScoreFromBackend(
-        id,
-        value,
-        sexo,
-        grado
-        //token || ""
-      );
-
+      const score = await getScoreFromBackend(id, value, sexo, grado);
       return {
         exercise_id: id,
         exercise_name: ex.name,
@@ -197,53 +181,69 @@ export const ResultsView = () => {
         </TextField>
       </Box>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 3,
-          justifyContent: "flex-start",
-          mt: 3,
-        }}
-      >
-        {selected.map((id) => {
-          const ex = exercises.find((e) => e.id === id);
-          if (!ex) return null;
-
-          return (
-            <Box
-              key={id}
-              sx={{ flex: `1 1 ${isMobile ? "100%" : "calc(50% - 12px)"}` }}
-            >
-              <Paper sx={{ p: 3 }} elevation={3}>
-                <Typography variant="h6" fontWeight={600} gutterBottom>
-                  {ex.name}
-                </Typography>
-
-                <TextField
-                  fullWidth
-                  type={
-                    ["6Km", "1000m", "natacion-50m"].includes(ex.id)
-                      ? "text"
-                      : "number"
-                  }
-                  label={
-                    ex.type === "reps"
-                      ? "Cantidad de repeticiones"
-                      : ["6Km", "1000m", "natacion-50m"].includes(ex.id)
-                      ? "Tiempo en formato mm:ss"
-                      : "Tiempo en segundos"
-                  }
-                  value={formData[id] ?? ""}
-                  onChange={(e) => handleChange(id, e.target.value)}
-                />
-              </Paper>
-            </Box>
-          );
-        })}
+      <Box mt={4}>
+        <ExerciseSelector
+          selectedId={null}
+          onChange={handleExerciseSelectionChange}
+        />
       </Box>
 
-      {!readyToPreview ? (
+      {/* Mostrar ejercicios seleccionados */}
+      {selected.length > 0 && (
+        <Box mt={2}>
+          <Typography variant="h6" gutterBottom>
+            Ejercicios seleccionados:
+          </Typography>
+          <Box display="flex" flexWrap="wrap" gap={1}>
+            {selected.map((id) => {
+              const exercise = exercises.find((e) => e.id === id);
+              return (
+                <Box
+                  key={id}
+                  sx={{
+                    bgcolor: "primary.main",
+                    color: "white",
+                    px: 2,
+                    py: 1,
+                    borderRadius: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Typography variant="body2">{exercise?.name}</Typography>
+                  <Button
+                    size="small"
+                    onClick={() => toggleSelect(id)}
+                    sx={{
+                      color: "white",
+                      minWidth: "auto",
+                      p: 0,
+                      fontSize: "18px",
+                      lineHeight: 1,
+                    }}
+                  >
+                    ×
+                  </Button>
+                </Box>
+              );
+            })}
+          </Box>
+        </Box>
+      )}
+
+      <Box mt={4} display="flex" flexDirection="column" gap={3}>
+        {selected.map((id) => (
+          <ExerciseDisplay
+            key={id}
+            selectedId={id}
+            value={formData[id] ?? ""}
+            onChange={(val) => handleChange(id, val)}
+          />
+        ))}
+      </Box>
+
+      {selected.length > 0 && !readyToPreview && (
         <Box textAlign="center" mt={4}>
           <Button
             variant="contained"
@@ -254,7 +254,9 @@ export const ResultsView = () => {
             Calcular Resultados
           </Button>
         </Box>
-      ) : (
+      )}
+
+      {readyToPreview && (
         <>
           <Box mt={4}>
             <ResultPreviewTable data={data} />

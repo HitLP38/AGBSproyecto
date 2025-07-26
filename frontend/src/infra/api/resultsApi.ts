@@ -82,6 +82,29 @@ export async function getScoreFromBackend(
 
   const json = await res.json();
 
-  // ✅ Asegúrate que tu backend devuelva directamente un número. Si devuelve un objeto, ajusta esta línea:
+  // Asegúrate que tu backend devuelva directamente un número. Si devuelve un objeto, ajusta esta línea:
   return typeof json === "number" ? json : json.puntaje;
+}
+
+// POST /notes/calculate_grade_from_selection —
+export async function calculateGradeFromSelection(
+  scores: number[],
+  token: string
+): Promise<{ mensaje: string; puntaje_total: number; nota_final: number }> {
+
+  const res = await fetch(`${API_URL}/notes/calculate_grade_from_selection`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ scores }),
+  });
+
+  if (!res.ok) {
+    const errorMessage = await res.text();
+    throw new Error(`Error al calcular la nota: ${errorMessage}`);
+  }
+
+  return await res.json();
 }

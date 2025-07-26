@@ -8,15 +8,25 @@ import {
   useTheme,
 } from "@mui/material";
 import { exercises } from "@/domain/exercise/data/exercises";
+import { exerciseImages } from "@/domain/exercise/data/exerciseImages";
 import { useExerciseStore } from "@/store/useExerciseStore";
 import { useNavigationStore } from "@/store/navigationStore";
 import { ExerciseCard } from "@/shared/components/ExerciseCard";
+import { useEffect } from "react";
 
 export const ExerciseView = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const { selected, favorites, onlyFavorites } = useExerciseStore();
+  const { selected, favorites, onlyFavorites, toggleSelect } =
+    useExerciseStore(); // ✅ Agregamos toggleSelect
   const { setView } = useNavigationStore();
+
+  // Redirección automática al cargar en móviles
+  useEffect(() => {
+    if (isMobile) {
+      setView("results");
+    }
+  }, [isMobile, setView]);
 
   // Filtro dinámico
   const visibleExercises = onlyFavorites
@@ -24,6 +34,33 @@ export const ExerciseView = () => {
     : exercises;
 
   const canContinue = selected.length > 0;
+
+  // ✅ Función para seleccionar/deseleccionar todos
+  const handleSelectAll = () => {
+    const allSelected = visibleExercises.every((ex) =>
+      selected.includes(ex.id)
+    );
+
+    if (allSelected) {
+      // Si todos están seleccionados, deseleccionar todos
+      visibleExercises.forEach((ex) => {
+        if (selected.includes(ex.id)) {
+          toggleSelect(ex.id);
+        }
+      });
+    } else {
+      // Si no todos están seleccionados, seleccionar todos
+      visibleExercises.forEach((ex) => {
+        if (!selected.includes(ex.id)) {
+          toggleSelect(ex.id);
+        }
+      });
+    }
+  };
+
+  const allSelected =
+    visibleExercises.length > 0 &&
+    visibleExercises.every((ex) => selected.includes(ex.id));
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -39,6 +76,19 @@ export const ExerciseView = () => {
         </Typography>
       )}
 
+      {/* ✅ Botón mejorado de seleccionar todos */}
+      {visibleExercises.length > 0 && (
+        <Box mb={3}>
+          <Button
+            variant="outlined"
+            onClick={handleSelectAll}
+            sx={{ textTransform: "none" }}
+          >
+            {allSelected ? "Deseleccionar todos" : "Seleccionar todos"}
+          </Button>
+        </Box>
+      )}
+
       <Box
         sx={{
           display: "grid",
@@ -51,7 +101,12 @@ export const ExerciseView = () => {
         }}
       >
         {visibleExercises.map((ex) => (
-          <ExerciseCard key={ex.id} {...ex} />
+          <ExerciseCard 
+            key={ex.id} 
+            id={ex.id}
+            name={ex.name}
+            image={exerciseImages[ex.id]}
+          />
         ))}
       </Box>
 

@@ -7,6 +7,7 @@ from typing import List
 from app.db.session import get_db
 from app.db.crud.note_results import create_note_result, get_note_results_by_user
 from app.services.note_service import get_final_grade
+from app.schemas.note import NoteSelection
 
 router = APIRouter()
 
@@ -66,3 +67,26 @@ def obtener_notas_usuario(user_id: str, db: Session = Depends(get_db)):
         }
         for n in notas
     ]
+
+
+@router.post("/calculate_grade_from_selection", response_model=dict)
+def calculate_grade_from_selection(
+    selection: NoteSelection
+):
+    """
+    Calcula una nota final a partir de una selección de puntajes.
+    """
+    if not selection.scores:
+        raise HTTPException(status_code=400, detail="La lista de puntajes no puede estar vacía")
+
+    puntaje_total = sum(selection.scores)
+    nota_final = get_final_grade(puntaje_total)
+
+    if nota_final is None:
+        raise HTTPException(status_code=400, detail="No se pudo calcular la nota final")
+
+    return {
+        "mensaje": "Cálculo de nota final exitoso",
+        "puntaje_total": puntaje_total,
+        "nota_final": nota_final,
+    }
