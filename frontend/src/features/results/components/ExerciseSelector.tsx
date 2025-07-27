@@ -39,16 +39,16 @@ export const ExerciseSelector = ({
 
   return (
     <Box>
-      <Typography variant="h6" fontWeight={600} gutterBottom>
-        Selecciona un ejercicio
-      </Typography>
       <FormControl fullWidth>
-        <InputLabel id="exercise-select-label">Ejercicio</InputLabel>
+        <InputLabel id="exercise-select-label">
+          Selecciona un ejercicio
+        </InputLabel>
         <Select
           labelId="exercise-select-label"
           value={localSelected}
-          label="Ejercicio"
+          label="Selecciona un ejercicio"
           onChange={handleChange}
+          sx={{ minWidth: 260 }}
         >
           {/*<MenuItem value="">Seleccionar uno...</MenuItem>*/}
           <MenuItem value="ALL">Seleccionar todos</MenuItem>

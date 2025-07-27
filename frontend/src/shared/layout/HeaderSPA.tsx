@@ -31,9 +31,19 @@ export const HeaderSPA = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const { setView, currentView } = useNavigationStore();
   const { user } = useUser();
-  const { onlyFavorites, toggleOnlyFavorites } = useExerciseStore();
+  {
+    /*const { onlyFavorites, toggleOnlyFavorites } = useExerciseStore();*/
+  }
   return (
-    <AppBar position="static" elevation={0} className="inverted-header">
+    <AppBar
+      position="static"
+      elevation={0}
+      className="inverted-header"
+      sx={{
+        zIndex: 10, // Mayor que cualquier contenido
+        position: "relative",
+      }}
+    >
       <Toolbar
         sx={{
           justifyContent: "space-between",
@@ -49,7 +59,7 @@ export const HeaderSPA = () => {
         </Stack>
 
         <Stack direction="row" alignItems="center" spacing={1}>
-          {/* ❤️ Favoritos */}
+          {/* ❤️ Favoritos 
           <AnimatedIconButton
             tooltip="Favoritos"
             icon={<Favorite color={onlyFavorites ? "error" : "inherit"} />}
@@ -65,7 +75,7 @@ export const HeaderSPA = () => {
                 onClick={() => setView("profile")}
               />
             </>
-          )}
+          )} */}
 
           {!user ? (
             <SignInButton mode="modal">
@@ -77,7 +87,7 @@ export const HeaderSPA = () => {
           ) : (
             <UserButton afterSignOutUrl="/" />
           )}
-          {user && (
+          {/*{user && (
             <>
               <Button
                 onClick={() => setView("profile")}
@@ -90,13 +100,20 @@ export const HeaderSPA = () => {
                 Perfil
               </Button>
             </>
-          )}
+          )}*/}
         </Stack>
       </Toolbar>
 
       {!isMobile && (
         <Box
-          sx={{ px: 2, pb: 1, display: "flex", gap: 2, alignItems: "center" }}
+          sx={{
+            px: 2,
+            py: 1,
+            pb: 1,
+            display: "flex",
+            gap: 2,
+            alignItems: "center",
+          }}
         >
           <Button
             startIcon={<Home />}

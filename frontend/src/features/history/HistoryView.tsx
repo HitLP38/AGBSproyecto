@@ -27,12 +27,20 @@ export const HistoryView = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" fontWeight={600} gutterBottom>
-        Historial de Resultados
-      </Typography>
+      <Box
+        flex={1}
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Typography variant="h4" fontWeight={600} gutterBottom>
+          Historial de Resultados
+        </Typography>
 
-      <DashboardFilters />
-
+        {/* Filtros */}
+        <DashboardFilters />
+      </Box>
       <Box
         sx={{
           display: "flex",

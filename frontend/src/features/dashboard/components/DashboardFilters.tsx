@@ -92,9 +92,6 @@ export const DashboardFilters = () => {
               </Box>
 
               <Box>
-                <Typography variant="body2" fontWeight={500} mb={1}>
-                  Ejercicios
-                </Typography>
                 <Box display="flex" gap={1} mb={1}>
                   <Button size="small" onClick={handleSelectAll}>
                     Seleccionar todos
@@ -105,6 +102,7 @@ export const DashboardFilters = () => {
                 </Box>
                 <Select
                   multiple
+                  label="Seleccione ejercicios"
                   fullWidth
                   value={selectedExercises}
                   onChange={(e) =>
@@ -116,9 +114,6 @@ export const DashboardFilters = () => {
                   }
                   displayEmpty
                 >
-                  <MenuItem disabled value="">
-                    Selecciona ejercicios
-                  </MenuItem>
                   {allExercises.map((ex) => (
                     <MenuItem key={ex.id} value={ex.id}>
                       {ex.name}
@@ -129,11 +124,9 @@ export const DashboardFilters = () => {
 
               {/* ✅ Agrega debajo de select de ejercicios */}
               <Box>
-                <Typography variant="body2" fontWeight={500} mb={1}>
-                  Sexo
-                </Typography>
                 <Select
                   fullWidth
+                  label="Sexo"
                   value={selectedSexo}
                   onChange={(e) => setSelectedSexo(e.target.value)}
                   displayEmpty
@@ -157,7 +150,7 @@ export const DashboardFilters = () => {
                 <MenuItem value="3">Grado 3</MenuItem>
               </TextField>
 
-              <FormControlLabel
+              {/*<FormControlLabel
                 control={
                   <Checkbox
                     checked={onlyFavorites}
@@ -165,7 +158,7 @@ export const DashboardFilters = () => {
                   />
                 }
                 label="Solo ejercicios favoritos"
-              />
+              />*/}
             </Stack>
           </LocalizationProvider>
         </DialogContent>

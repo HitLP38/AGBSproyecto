@@ -35,10 +35,10 @@ export const ExerciseCard = ({ id, name, image }: Props) => {
         <CardActionArea onClick={() => toggleSelect(id)}>
           <CardMedia
             component="img"
-            height="140"
+            height="200"
             image={image}
             alt={name}
-            sx={{ objectFit: "cover" }}
+            sx={{ objectFit: "contain" }}
           />
           <CardContent sx={{ textAlign: "center" }}>
             <Typography fontWeight={600}>{name}</Typography>

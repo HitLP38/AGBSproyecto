@@ -41,12 +41,20 @@ export const DashboardView = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" fontWeight={700} gutterBottom>
-        Dashboard de Rendimiento
-      </Typography>
+      <Box
+        flex={1}
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Typography variant="h4" fontWeight={700} gutterBottom>
+          Dashboard de Rendimiento
+        </Typography>
 
-      {/* Filtros */}
-      <DashboardFilters />
+        {/* Filtros */}
+        <DashboardFilters />
+      </Box>
 
       {/* Tarjetas resumen */}
       <SummaryCards results={filteredResults} />

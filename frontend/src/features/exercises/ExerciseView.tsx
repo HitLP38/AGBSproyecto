@@ -63,30 +63,48 @@ export const ExerciseView = () => {
     visibleExercises.every((ex) => selected.includes(ex.id));
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" fontWeight={600} mb={2}>
-        {onlyFavorites
-          ? "Tus Ejercicios Favoritos"
-          : "Selecciona tus ejercicios"}
-      </Typography>
+    <Container
+      maxWidth="lg"
+      sx={{ py: 4, marginTop: { xs: "-40px", md: "-20px", lg: " -20px" } }}
+    >
+      {/* ✅ CAMBIO: Header con título y botón en la misma línea */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+          flexWrap: "wrap",
+          gap: 2,
+        }}
+      >
+        <Typography variant="h4" fontWeight={600}>
+          {onlyFavorites
+            ? "Tus Ejercicios Favoritos"
+            : "Selecciona tus ejercicios"}
+        </Typography>
+
+        {/* ✅ Botón alineado a la derecha del título */}
+        {visibleExercises.length > 0 && (
+          <Button
+            variant="outlined"
+            onClick={handleSelectAll}
+            sx={{
+              textTransform: "none",
+              minWidth: "auto",
+              px: 3,
+              py: 1,
+            }}
+          >
+            {allSelected ? "Deseleccionar todos" : "Seleccionar todos"}
+          </Button>
+        )}
+      </Box>
 
       {onlyFavorites && visibleExercises.length === 0 && (
         <Typography color="text.secondary" mb={2}>
           No tienes ejercicios marcados como favoritos ❤️
         </Typography>
-      )}
-
-      {/* ✅ Botón mejorado de seleccionar todos */}
-      {visibleExercises.length > 0 && (
-        <Box mb={3}>
-          <Button
-            variant="outlined"
-            onClick={handleSelectAll}
-            sx={{ textTransform: "none" }}
-          >
-            {allSelected ? "Deseleccionar todos" : "Seleccionar todos"}
-          </Button>
-        </Box>
       )}
 
       <Box
@@ -101,8 +119,8 @@ export const ExerciseView = () => {
         }}
       >
         {visibleExercises.map((ex) => (
-          <ExerciseCard 
-            key={ex.id} 
+          <ExerciseCard
+            key={ex.id}
             id={ex.id}
             name={ex.name}
             image={exerciseImages[ex.id]}

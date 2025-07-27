@@ -26,15 +26,19 @@ import { ExerciseSelector } from "./components/ExerciseSelector";
 import { ExerciseDisplay } from "./components/ExerciseDisplay";
 
 function normalizarMarca(exercise_id: string, valor: number | string): string {
-  const ejerciciosTiempo = ["6Km", "1000m", "natacion-50m"];
-  if (ejerciciosTiempo.includes(exercise_id)) {
+  // ✅ Solo estos ejercicios van en formato mm:ss
+  const ejerciciosMMSS = ["6Km", "1000m", "natacion-50m"];
+
+  if (ejerciciosMMSS.includes(exercise_id)) {
     const num =
       typeof valor === "string" ? convertirTiempoANumero(valor) : valor;
     const minutos = Math.floor(num);
     const segundos = Math.round((num - minutos) * 60);
     return `${minutos}:${segundos.toString().padStart(2, "0")}`;
   }
-  return Number(valor).toString();
+
+  // ⚠️ Para 50m-lisos y demás, guardar como string numérico directo
+  return valor.toString();
 }
 
 function convertirTiempoANumero(tiempo: string): number {
@@ -179,9 +183,7 @@ export const ResultsView = () => {
           <MenuItem value="2">Grado 2</MenuItem>
           <MenuItem value="3">Grado 3</MenuItem>
         </TextField>
-      </Box>
 
-      <Box mt={4}>
         <ExerciseSelector
           selectedId={null}
           onChange={handleExerciseSelectionChange}

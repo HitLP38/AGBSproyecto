@@ -13,6 +13,9 @@ import {
   FitnessCenter as FitnessCenterIcon,
   RocketLaunch as RocketLaunchIcon,
   ArrowForward,
+  Male as MaleIcon,
+  SportsGymnastics as SportsIcon,
+  Star as StarIcon,
 } from "@mui/icons-material";
 import { useNavigationStore } from "@/store/navigationStore";
 
@@ -42,28 +45,87 @@ export const HomeView = () => {
     },
   ];
 
+  const selectionItems = [
+    {
+      icon: <MaleIcon sx={{ fontSize: 24, color: "primary.main" }} />,
+      text: "Seleccione sexo",
+    },
+    {
+      icon: <SportsIcon sx={{ fontSize: 24, color: "primary.main" }} />,
+      text: "Seleccione Ejercicio",
+    },
+    {
+      icon: <StarIcon sx={{ fontSize: 24, color: "primary.main" }} />,
+      text: "Seleccione grado",
+    },
+  ];
+
   return (
-    <Box sx={{ minHeight: "80vh" }}>
-      <Container maxWidth="lg">
+    <Box
+      sx={{
+        minHeight: "calc(100vh - 120px)", // Restar altura de headers aproximada
+        //height: "calc(100vh - 120px)",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        overflow: "hidden",
+
+        zIndex: 1,
+        marginTop: { xs: "0px", md: "-40px", lg: " -60px" },
+        px: { xs: "1 em", md: "1.5 em", lg: " 4 em" },
+      }}
+    >
+      <Box
+        sx={{
+          //flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          maxWidth: "1400px", // Límite máximo para pantallas muy grandes
+          width: "100%",
+          mx: "auto", // Centrar horizontalmente
+          px: { xs: 1, sm: 2, md: 3, lg: 4 }, // Solo padding lateral mínimo
+          py: 0, // Sin padding vertical
+          // Forzar eliminación de padding con !important
+          "& *": {
+            boxSizing: "border-box",
+          },
+          // Sobrescribir cualquier padding de MUI
+          paddingTop: "0 !important",
+          paddingBottom: "0 !important",
+        }}
+      >
         {/* Hero */}
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            minHeight: "70vh",
-            gap: { xs: 4, md: 8 },
+            gap: { xs: 3, md: 6, lg: 8 },
             flexDirection: { xs: "column", md: "row" },
-            py: { xs: 4, md: 0 },
+            py: { xs: 2, md: 3, lg: 4 },
+            flex: 1,
+            minHeight: 0, // Permite que flex funcione correctamente
           }}
         >
-          <Box sx={{ flex: 1, textAlign: { xs: "center", md: "left" } }}>
+          <Box
+            sx={{
+              flex: 1,
+              textAlign: { xs: "center", md: "left" },
+              maxWidth: { md: "600px", lg: "700px" },
+            }}
+          >
             <Typography
               variant="h2"
               sx={{
                 fontWeight: 700,
                 color: "primary.main",
-                mb: 2,
-                fontSize: { xs: "2.5rem", md: "3.5rem" },
+                mb: { xs: 1.5, md: 2 },
+                fontSize: {
+                  xs: "1.8rem",
+                  sm: "2.2rem",
+                  md: "2.5rem",
+                  lg: "3rem",
+                  xl: "3.5rem",
+                },
                 lineHeight: 1.2,
               }}
             >
@@ -86,10 +148,16 @@ export const HomeView = () => {
               variant="h6"
               sx={{
                 color: "text.secondary",
-                mb: 4,
+                mb: { xs: 2.5, md: 3, lg: 4 },
                 lineHeight: 1.6,
-                fontSize: { xs: "1rem", md: "1.25rem" },
-                maxWidth: "600px",
+                fontSize: {
+                  xs: "0.85rem",
+                  sm: "0.92rem",
+                  md: "1.05rem",
+                  lg: "1.1rem",
+                  xl: "1.2rem",
+                },
+                maxWidth: { xs: "100%", md: "500px", lg: "600px" },
                 mx: { xs: "auto", md: 0 },
               }}
             >
@@ -104,9 +172,9 @@ export const HomeView = () => {
               endIcon={<ArrowForward />}
               onClick={handleStartEvaluation}
               sx={{
-                py: 2,
-                px: 4,
-                fontSize: "1.1rem",
+                py: { xs: 1.5, md: 2 },
+                px: { xs: 3, md: 4 },
+                fontSize: { xs: "0.85rem", md: "0.92rem", lg: "1rem" },
                 fontWeight: 600,
                 borderRadius: 3,
                 textTransform: "none",
@@ -130,103 +198,138 @@ export const HomeView = () => {
               flex: 1,
               display: "flex",
               justifyContent: "center",
-              maxWidth: { xs: "100%", md: "500px" },
+              alignItems: "center",
+              maxWidth: { xs: "100%", md: "45%", lg: "40%" },
+              minHeight: { xs: "250px", md: "350px", lg: "450px" },
             }}
           >
             <Box
               sx={{
-                width: "100%",
-                height: { xs: "300px", md: "400px" },
-                borderRadius: 4,
-                background: `url('/hero-retopreparacion.png') center/cover no-repeat`,
-                boxShadow: theme.shadows[12],
+                width: {
+                  xs: "280px",
+                  sm: "350px",
+                  md: "400px",
+                  lg: "500px",
+                  xl: "600px",
+                },
+                height: {
+                  xs: "240px",
+                  sm: "300px",
+                  md: "340px",
+                  lg: "420px",
+                  xl: "500px",
+                },
+                backgroundImage: "url('/Home portada 1.png')",
+                backgroundSize: "contain",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                borderRadius: 2,
               }}
             />
           </Box>
         </Box>
 
-        {/* Beneficios */}
-        <Box sx={{ py: { xs: 4, md: 8 } }}>
-          <Typography
-            variant="h4"
-            align="center"
-            fontWeight={600}
-            color="primary.main"
-            mb={2}
-          >
-            ¡Prepárate para rendir al máximo!
-          </Typography>
-
-          <Box
+        {/* Contenedor horizontal inferior con margen negativo */}
+        <Box
+          sx={{
+            position: "relative",
+            marginTop: { xs: "-40px", md: "-60px", lg: "-80px" },
+            zIndex: 10,
+            mb: 2,
+          }}
+        >
+          <Card
             sx={{
-              display: "flex",
-              gap: 3,
-              justifyContent: "center",
-              flexDirection: { xs: "column", md: "row" },
-              maxWidth: "900px",
-              mx: "auto",
+              borderRadius: 4,
+              boxShadow: theme.shadows[8],
+              background: "rgba(255, 255, 255, 0.95)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
             }}
           >
-            {benefits.map((step, index) => (
-              <Card
-                key={index}
+            <CardContent sx={{ p: { xs: 1.5, sm: 1.8, md: 2, lg: 2 } }}>
+              <Box
                 sx={{
-                  flex: 1,
-                  transition: "all 0.3s ease",
-                  cursor: "pointer",
-                  border: "2px solid transparent",
-                  "&:hover": {
-                    transform: "translateY(-8px)",
-                    boxShadow: theme.shadows[12],
-                    borderColor: "primary.light",
-                  },
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: { xs: 2, sm: 1.5, md: 2, lg: 4 },
                 }}
               >
-                <CardContent
-                  sx={{
-                    textAlign: "center",
-                    p: 4,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
+                {/* Items de selección */}
+                {selectionItems.map((item, index) => (
                   <Box
+                    key={index}
                     sx={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: "50%",
-                      background:
-                        "linear-gradient(135deg, #2E3E50 0%, #4A5D75 100%)",
-                      color: "white",
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      fontWeight: 700,
-                      fontSize: "1.2rem",
-                      mb: 2,
+                      gap: { xs: 1, md: 1.5 },
+                      flex: 1,
+                      justifyContent: { xs: "center", sm: "flex-start" },
+                      minWidth: { xs: "180px", sm: "auto" },
                     }}
                   >
-                    {index + 1}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: { xs: 35, md: 40 },
+                        height: { xs: 35, md: 40 },
+                        borderRadius: "50%",
+                        backgroundColor: "rgba(46, 62, 80, 0.1)",
+                      }}
+                    >
+                      {item.icon}
+                    </Box>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontWeight: 500,
+                        color: "text.primary",
+                        fontSize: {
+                          xs: "0.8rem",
+                          sm: "0.85rem",
+                          md: "0.9rem",
+                          lg: "1rem",
+                        },
+                      }}
+                    >
+                      {item.text}
+                    </Typography>
                   </Box>
-                  <Box sx={{ mb: 2 }}>{step.icon}</Box>
-                  <Typography
-                    variant="h6"
-                    fontWeight={600}
-                    color="primary.main"
-                    mb={1}
-                  >
-                    {step.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {step.description}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
-          </Box>
+                ))}
+
+                {/* Botón */}
+                <Button
+                  variant="contained"
+                  sx={{
+                    py: { xs: 1.2, md: 1.5 },
+                    px: { xs: 2.5, md: 3 },
+                    fontSize: { xs: "0.8rem", md: "0.9rem" },
+                    fontWeight: 600,
+                    borderRadius: 3,
+                    textTransform: "none",
+                    background:
+                      "linear-gradient(135deg, #2E3E50 0%, #4A5D75 100%)",
+                    minWidth: { xs: "140px", sm: "120px", md: "140px" },
+                    "&:hover": {
+                      background:
+                        "linear-gradient(135deg, #1E2B3A 0%, #2E3E50 100%)",
+                      transform: "translateY(-1px)",
+                      boxShadow: theme.shadows[6],
+                    },
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  ¡Comenzar!
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
         </Box>
-      </Container>
+      </Box>
     </Box>
   );
 };

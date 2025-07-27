@@ -18,7 +18,7 @@ interface ScrollPickerProps {
   open: boolean;
   onClose: () => void;
   onConfirm: (value: string) => void;
-  mode: "time" | "reps"; // time = mm:ss, reps = número entero
+  mode: "time" | "reps" | "seconds"; // ✅ añadimos "seconds" para 50m-lisos
   initialValue?: string;
   label?: string;
 }
@@ -34,10 +34,11 @@ export const ScrollPicker = ({
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Estado local para tiempo y repeticiones
+  // Estados locales
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
-  const [rep, setRep] = useState(50); // Valor inicial centrado
+  const [rep, setRep] = useState(50); // para reps
+  const [decimalSeconds, setDecimalSeconds] = useState("7.50"); // para seconds
 
   useEffect(() => {
     if (initialValue) {
@@ -47,15 +48,21 @@ export const ScrollPicker = ({
         setSeconds(sec);
       } else if (mode === "reps") {
         setRep(Number(initialValue));
+      } else if (mode === "seconds") {
+        setDecimalSeconds(initialValue);
       }
     }
   }, [initialValue, mode]);
 
   const handleConfirm = () => {
-    const value =
-      mode === "time"
-        ? `${minutes}:${seconds.toString().padStart(2, "0")}`
-        : rep.toString();
+    let value = "";
+    if (mode === "time") {
+      value = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    } else if (mode === "reps") {
+      value = rep.toString();
+    } else if (mode === "seconds") {
+      value = decimalSeconds;
+    }
     onConfirm(value);
   };
 
@@ -101,7 +108,7 @@ export const ScrollPicker = ({
                 </Select>
               </Box>
             </Stack>
-          ) : (
+          ) : mode === "reps" ? (
             <Box>
               <Typography align="center" fontWeight={600}>
                 {label || "Valor"}
@@ -114,6 +121,25 @@ export const ScrollPicker = ({
                 {Array.from({ length: 51 }, (_, i) => i + 30).map((num) => (
                   <MenuItem key={num} value={num}>
                     {num}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Box>
+          ) : (
+            <Box>
+              <Typography align="center" fontWeight={600}>
+                Segundos
+              </Typography>
+              <Select
+                value={decimalSeconds}
+                onChange={(e) => setDecimalSeconds(e.target.value)}
+                MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
+              >
+                {Array.from({ length: 101 }, (_, i) =>
+                  (5 + i * 0.1).toFixed(2)
+                ).map((val) => (
+                  <MenuItem key={val} value={val}>
+                    {val}
                   </MenuItem>
                 ))}
               </Select>
