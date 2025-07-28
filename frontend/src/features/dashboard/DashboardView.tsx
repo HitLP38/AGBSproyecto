@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 import { DashboardFilters } from "./components/DashboardFilters";
 import { SummaryCards } from "./components/SummaryCards";
-import { NoteTable } from "./components/NoteTable";
+import { NoteTableWrapper } from "./components/NoteTableWrapper";
 import { ScoreChart } from "./components/ScoreChart";
 // import { ProgressChart } from "./components/ProgressChart";
 import { PerformanceRadar } from "./components/PerformanceRadar";
@@ -38,6 +38,14 @@ export const DashboardView = () => {
 
     loadResults();
   }, [user, getToken, fetchAll]);
+
+  const refetchResults = async () => {
+    const token = await getToken();
+    const userId = user?.id;
+    if (token && userId) {
+      await fetchAll(userId, token);
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -76,8 +84,8 @@ export const DashboardView = () => {
         </Box>
       </Box>
 
-      {/* Tabla de registros */}
-      <NoteTable results={filteredResults} />
+      {/* Tabla de registros con funcionalidades de selección y cálculo */}
+      <NoteTableWrapper results={filteredResults} refetchResults={refetchResults} />
     </Container>
   );
 };

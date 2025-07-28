@@ -15,5 +15,3 @@ class ResultCreate(BaseModel):
 
 class ResultResponse(ResultCreate):
     id: str
-    sexo: Optional[str] = None   # ✅ ahora es opcional para evitar errores si está NULL
-    grado: Optional[str] = None  # ✅ lo mismo aquí

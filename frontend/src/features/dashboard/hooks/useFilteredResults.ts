@@ -19,6 +19,14 @@ export const useFilteredResults = (): {
   const { favorites } = useExerciseStore();
 
   const filteredResults = useMemo(() => {
+    console.log("🔍 Filtros activos:", {
+      selectedExercises,
+      selectedSexo,
+      selectedGrado,
+      dateRange
+    });
+    console.log("🔍 Total de records:", records.length);
+    
     return records.filter((res) => {
       const date = parseISO(res.timestamp);
 

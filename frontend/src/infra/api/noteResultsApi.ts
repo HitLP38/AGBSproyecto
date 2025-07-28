@@ -2,17 +2,17 @@
 
 import axios from "@/lib/axios"; // Asegúrate que tienes este helper configurado
 
-const BASE_URL = "/api/notes"; // Ajusta si tu endpoint es diferente
+const BASE_URL = "/results"; // Corregido: sin /api/ prefix
 
 /**
- * Elimina un resultado de nota por ID.
- * @param id ID del resultado de nota
+ * Elimina un resultado por ID.
+ * @param id ID del resultado
  */
 export const deleteNoteResult = async (id: string): Promise<void> => {
   try {
     await axios.delete(`${BASE_URL}/${id}`);
   } catch (error) {
-    console.error("Error al eliminar nota:", error);
+    console.error("Error al eliminar resultado:", error);
     throw error;
   }
 };

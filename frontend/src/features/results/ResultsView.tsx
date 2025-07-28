@@ -102,7 +102,7 @@ export const ResultsView = () => {
       return !isNaN(Number(value)) && Number(value) > 0;
     });
 
-    if (!allFilled || !sexo || !grado) {
+    if (!allFilled || !sexo || !grado || sexo === "" || grado === "") {
       setError(true);
       return;
     }
@@ -154,7 +154,14 @@ export const ResultsView = () => {
 
   const handleSave = async () => {
     const token = await getToken();
+    
+    // Validación adicional antes de guardar
     for (const item of data) {
+      if (!item.sexo || !item.grado || item.sexo === "" || item.grado === "") {
+        console.error("Error: Datos inválidos para guardar", item);
+        setError(true);
+        return;
+      }
       await saveResult(item, token || "");
     }
     clear();
@@ -178,7 +185,9 @@ export const ResultsView = () => {
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          Todos los campos deben completarse con valores válidos.
+          {!sexo || sexo === "" ? "Debe seleccionar un sexo. " : ""}
+          {!grado || grado === "" ? "Debe seleccionar un grado. " : ""}
+          {sexo && grado && sexo !== "" && grado !== "" ? "Todos los campos deben completarse con valores válidos." : ""}
         </Alert>
       )}
 

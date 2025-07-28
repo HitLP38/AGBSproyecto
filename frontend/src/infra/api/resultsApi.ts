@@ -7,8 +7,8 @@ export interface ResultInput {
   score: number;
   timestamp: string;
   user_id: string;
-  sexo?: string;
-  grado?: string;
+  sexo: string; // Cambiado a requerido
+  grado: string; // Cambiado a requerido
 }
 
 export interface ResultResponse extends ResultInput {
@@ -79,7 +79,8 @@ export async function getResultsByUser(
     throw new Error(`Error al obtener resultados: ${errorMessage}`);
   }
 
-  return await res.json();
+  const results = await res.json();
+  return results;
 }
 
 // ✅ POST /score — calcula puntaje oficial desde el backend
@@ -96,7 +97,7 @@ export async function getScoreFromBackend(
     grado: parseInt(grado, 10),
   };
 
-  const res = await fetch(`${API_URL}/score/`, {
+  const res = await fetch(`${API_URL}/api/score/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -24,6 +24,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useDashboardFilterStore } from "@/store/dashboardFilterStore";
 import { useExerciseStore } from "@/store/useExerciseStore";
+import { exercises } from "@/domain/exercise/data/exercises";
 
 export const DashboardFilters = () => {
   const {
@@ -40,13 +41,13 @@ export const DashboardFilters = () => {
   } = useDashboardFilterStore();
 
   const { favorites } = useExerciseStore();
-  const allExercises = [
-    { id: "pushups", name: "Flexiones" },
-    { id: "pullups", name: "Dominadas" },
-    { id: "squats", name: "Sentadillas" },
-    { id: "running", name: "6 KM" },
-    { id: "plank", name: "Plancha" },
-  ];
+  // Usar los ejercicios reales definidos en exercises.ts
+  const allExercises = exercises.map(exercise => ({
+    id: exercise.id,
+    name: exercise.name
+  }));
+  
+  console.log("🔍 Ejercicios disponibles en filtros:", allExercises);
 
   const [open, setOpen] = useState(false);
 

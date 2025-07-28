@@ -50,7 +50,11 @@ export const NoteTable = ({ results, onDelete, onSelectionChange }: Props) => {
       flex: 0.7,
       headerAlign: "center",
       align: "center",
-      valueFormatter: (params: any) => traducirSexo(params.value),
+      renderCell: (params) => (
+        <Typography variant="body2">
+          {traducirSexo(params.row.sexo)}
+        </Typography>
+      ),
     },
     {
       field: "grado",
@@ -98,11 +102,7 @@ export const NoteTable = ({ results, onDelete, onSelectionChange }: Props) => {
   const validResults = results.filter((r) => r && typeof r === "object");
 
   return (
-    <Box mt={4}>
-      <Typography variant="h6" fontWeight={600} mb={2}>
-        Tabla de Notas
-      </Typography>
-
+    <Box>
       <Paper
         elevation={3}
         sx={{
@@ -117,13 +117,20 @@ export const NoteTable = ({ results, onDelete, onSelectionChange }: Props) => {
             columns={columns}
             getRowId={(row) => row.id}
             checkboxSelection
-            onRowSelectionModelChange={(
-              selectionModel: GridRowSelectionModel
-            ) => {
-              // Convertir a array independientemente del tipo
-              const selectedIds = Array.isArray(selectionModel)
-                ? selectionModel.map(String)
-                : Array.from(selectionModel as any).map(String);
+            onRowSelectionModelChange={(selectionModel: any) => {
+              let selectedIds: string[] = [];
+              
+              // Manejar el caso específico que vemos en los logs
+              if (selectionModel && typeof selectionModel === 'object' && 'ids' in selectionModel) {
+                const idsSet = selectionModel.ids;
+                if (idsSet && typeof idsSet === 'object') {
+                  // Convertir el Set a array
+                  selectedIds = Array.from(idsSet).map((id: any) => String(id));
+                }
+              } else if (Array.isArray(selectionModel)) {
+                selectedIds = selectionModel.map(String);
+              }
+              
               onSelectionChange?.(selectedIds);
             }}
             initialState={{
@@ -135,10 +142,15 @@ export const NoteTable = ({ results, onDelete, onSelectionChange }: Props) => {
               },
             }}
             pageSizeOptions={[5, 10, 25]}
-            disableRowSelectionOnClick
+            disableRowSelectionOnClick={false}
             disableColumnMenu={false}
             localeText={{
               noRowsLabel: "No hay datos disponibles para mostrar.",
+            }}
+            sx={{
+              '& .MuiDataGrid-checkboxInput': {
+                color: 'primary.main',
+              },
             }}
           />
         </Box>

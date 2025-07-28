@@ -16,11 +16,25 @@ def create_result(db: Session, result_data: ResultCreate) -> Result:
         sexo=result_data.sexo,    # ✅ Añadido
         grado=result_data.grado   # ✅ Añadido
     )
+    
     db.add(db_result)
     db.commit()
     db.refresh(db_result)
+    
     return db_result
 
 
 def get_by_user(db: Session, user_id: str) -> list[Result]:
     return db.query(Result).filter(Result.user_id == user_id).all()
+
+def delete_result(db: Session, result_id: str) -> bool:
+    """
+    Elimina un resultado por ID
+    """
+    result = db.query(Result).filter(Result.id == result_id).first()
+    if not result:
+        raise ValueError(f"No se encontró el resultado con ID: {result_id}")
+    
+    db.delete(result)
+    db.commit()
+    return True
