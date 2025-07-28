@@ -10,6 +10,7 @@ export interface PreviewItem extends ResultInput {
   exercise_name: string;
   maxValue: number;
   maxScore: number;
+  rawValue: number; // ✅ valor numérico real para guardar en backend
 }
 
 /**

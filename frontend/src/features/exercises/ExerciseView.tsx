@@ -84,21 +84,43 @@ export const ExerciseView = () => {
             : "Selecciona tus ejercicios"}
         </Typography>
 
-        {/* ✅ Botón alineado a la derecha del título */}
-        {visibleExercises.length > 0 && (
-          <Button
-            variant="outlined"
-            onClick={handleSelectAll}
-            sx={{
-              textTransform: "none",
-              minWidth: "auto",
-              px: 3,
-              py: 1,
-            }}
-          >
-            {allSelected ? "Deseleccionar todos" : "Seleccionar todos"}
-          </Button>
-        )}
+        <Box
+          mt={4}
+          textAlign="center"
+          sx={{ display: "flex", gap: 2, justifyContent: "space-between" }}
+        >
+          {canContinue && (
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => setView("results")}
+              sx={{
+                px: 2,
+                py: 1,
+                fontWeight: 600,
+                borderRadius: 3,
+                textTransform: "none",
+              }}
+            >
+              ¡Comenzar Evaluación!
+            </Button>
+          )}
+          {/* ✅ Botón alineado a la derecha del título */}
+          {visibleExercises.length > 0 && (
+            <Button
+              variant="outlined"
+              onClick={handleSelectAll}
+              sx={{
+                textTransform: "none",
+                minWidth: "auto",
+                px: 3,
+                py: 1,
+              }}
+            >
+              {allSelected ? "Deseleccionar todos" : "Seleccionar todos"}
+            </Button>
+          )}
+        </Box>
       </Box>
 
       {onlyFavorites && visibleExercises.length === 0 && (
@@ -127,25 +149,6 @@ export const ExerciseView = () => {
           />
         ))}
       </Box>
-
-      {canContinue && (
-        <Box mt={4} textAlign="center">
-          <Button
-            variant="contained"
-            size="large"
-            onClick={() => setView("results")}
-            sx={{
-              px: 4,
-              py: 2,
-              fontWeight: 600,
-              borderRadius: 3,
-              textTransform: "none",
-            }}
-          >
-            ¡Comenzar Evaluación!
-          </Button>
-        </Box>
-      )}
     </Container>
   );
 };

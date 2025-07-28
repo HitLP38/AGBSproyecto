@@ -1,15 +1,19 @@
-// ✅ src/features/dashboard/components/NoteTable.tsx
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, IconButton, Paper, Typography, Tooltip } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { parseISO, isValid, format } from "date-fns";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { exercises } from "@/domain/exercise/data/exercises";
 import { ResultResponse } from "@/infra/api/resultsApi";
+import { traducirSexo } from "@/utils/traducirSexo";
+import { GridRowSelectionModel } from "@mui/x-data-grid";
 
 interface Props {
   results: ResultResponse[];
+  onDelete?: (id: string) => void; // función callback para borrar
+  onSelectionChange?: (selectedIds: string[]) => void; // para el botón externo
 }
 
-export const NoteTable = ({ results }: Props) => {
+export const NoteTable = ({ results, onDelete, onSelectionChange }: Props) => {
   const columns: GridColDef[] = [
     {
       field: "exercise_id",
@@ -28,6 +32,8 @@ export const NoteTable = ({ results }: Props) => {
       type: "number",
       flex: 0.7,
       sortable: true,
+      headerAlign: "center",
+      align: "center",
     },
     {
       field: "score",
@@ -35,23 +41,31 @@ export const NoteTable = ({ results }: Props) => {
       type: "number",
       flex: 0.7,
       sortable: true,
+      headerAlign: "center",
+      align: "center",
     },
     {
       field: "sexo",
       headerName: "Sexo",
       flex: 0.7,
+      headerAlign: "center",
+      align: "center",
+      valueFormatter: (params: any) => traducirSexo(params.value),
     },
     {
       field: "grado",
       headerName: "Grado",
       flex: 0.7,
+      headerAlign: "center",
+      align: "center",
     },
-
     {
       field: "timestamp",
       headerName: "Fecha",
       flex: 1,
       sortable: true,
+      headerAlign: "center",
+      align: "center",
       valueFormatter: (value) => {
         if (!value) return "Sin fecha";
         try {
@@ -64,6 +78,21 @@ export const NoteTable = ({ results }: Props) => {
         }
       },
     },
+    {
+      field: "acciones",
+      headerName: "Acciones",
+      flex: 0.6,
+      headerAlign: "center",
+      align: "center",
+      sortable: false,
+      renderCell: (params) => (
+        <Tooltip title="Eliminar">
+          <IconButton color="error" onClick={() => onDelete?.(params.row.id)}>
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      ),
+    },
   ];
 
   const validResults = results.filter((r) => r && typeof r === "object");
@@ -74,26 +103,45 @@ export const NoteTable = ({ results }: Props) => {
         Tabla de Notas
       </Typography>
 
-      <Paper elevation={3} sx={{ height: 400, p: 2 }}>
-        <DataGrid
-          rows={validResults}
-          columns={columns}
-          getRowId={(row) => row.id}
-          initialState={{
-            pagination: {
-              paginationModel: { pageSize: 5, page: 0 },
-            },
-            sorting: {
-              sortModel: [{ field: "timestamp", sort: "desc" }],
-            },
-          }}
-          pageSizeOptions={[5, 10, 25]}
-          disableRowSelectionOnClick
-          disableColumnMenu={false}
-          localeText={{
-            noRowsLabel: "No hay datos disponibles para mostrar.",
-          }}
-        />
+      <Paper
+        elevation={3}
+        sx={{
+          height: 420,
+          p: 2,
+          overflowX: "auto", // scroll horizontal en móvil
+        }}
+      >
+        <Box minWidth={800}>
+          <DataGrid
+            rows={validResults}
+            columns={columns}
+            getRowId={(row) => row.id}
+            checkboxSelection
+            onRowSelectionModelChange={(
+              selectionModel: GridRowSelectionModel
+            ) => {
+              // Convertir a array independientemente del tipo
+              const selectedIds = Array.isArray(selectionModel)
+                ? selectionModel.map(String)
+                : Array.from(selectionModel as any).map(String);
+              onSelectionChange?.(selectedIds);
+            }}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 5, page: 0 },
+              },
+              sorting: {
+                sortModel: [{ field: "timestamp", sort: "desc" }],
+              },
+            }}
+            pageSizeOptions={[5, 10, 25]}
+            disableRowSelectionOnClick
+            disableColumnMenu={false}
+            localeText={{
+              noRowsLabel: "No hay datos disponibles para mostrar.",
+            }}
+          />
+        </Box>
       </Paper>
     </Box>
   );

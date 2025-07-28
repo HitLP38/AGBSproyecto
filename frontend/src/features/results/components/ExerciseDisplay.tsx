@@ -20,7 +20,6 @@ interface Props {
 export const ExerciseDisplay = ({ selectedId, value, onChange }: Props) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
   const [pickerOpen, setPickerOpen] = useState(false);
 
   const exercise = exercises.find((e) => e.id === selectedId);
@@ -43,9 +42,15 @@ export const ExerciseDisplay = ({ selectedId, value, onChange }: Props) => {
     setPickerOpen(false);
   };
 
-  // Convertir inputType a mode para ScrollPicker
-  const scrollPickerMode: "time" | "reps" =
-    config.inputType === "scroll-time" ? "time" : "reps";
+  // ✅ Determinar el modo visual para ScrollPicker
+  const scrollPickerMode: "time" | "reps" | "seconds" | "swim-time" =
+    selectedId === "50m-lisos"
+      ? "seconds"
+      : selectedId === "natacion-50m"
+      ? "swim-time"
+      : config.inputType === "scroll-time"
+      ? "time"
+      : "reps";
 
   return (
     <Box
@@ -105,7 +110,7 @@ export const ExerciseDisplay = ({ selectedId, value, onChange }: Props) => {
         </Button>
       </Box>
 
-      {/* ScrollPicker como modal */}
+      {/* Picker modal */}
       <ScrollPicker
         open={pickerOpen}
         onClose={() => setPickerOpen(false)}

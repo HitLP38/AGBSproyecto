@@ -13,7 +13,11 @@ import {
   Stack,
   TextField,
   Typography,
+  InputLabel,
+  FormControl,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -68,7 +72,26 @@ export const DashboardFilters = () => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Filtros del Dashboard</DialogTitle>
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          Filtros del Dashboard
+          <IconButton
+            onClick={() => setOpen(false)}
+            sx={{
+              color: "grey.500",
+              "&:hover": {
+                backgroundColor: "grey.100",
+              },
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
         <DialogContent>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Stack spacing={3} mt={1}>
@@ -91,6 +114,7 @@ export const DashboardFilters = () => {
                 />
               </Box>
 
+              {/* ✅ Select de ejercicios mejorado */}
               <Box>
                 <Box display="flex" gap={1} mb={1}>
                   <Button size="small" onClick={handleSelectAll}>
@@ -100,55 +124,57 @@ export const DashboardFilters = () => {
                     Limpiar selección
                   </Button>
                 </Box>
-                <Select
-                  multiple
-                  label="Seleccione ejercicios"
-                  fullWidth
-                  value={selectedExercises}
-                  onChange={(e) =>
-                    setSelectedExercises(
-                      typeof e.target.value === "string"
-                        ? e.target.value.split(",")
-                        : e.target.value
-                    )
-                  }
-                  displayEmpty
-                >
-                  {allExercises.map((ex) => (
-                    <MenuItem key={ex.id} value={ex.id}>
-                      {ex.name}
-                    </MenuItem>
-                  ))}
-                </Select>
+                <FormControl fullWidth>
+                  <InputLabel>Ejercicios</InputLabel>
+                  <Select
+                    multiple
+                    label="Ejercicios"
+                    value={selectedExercises}
+                    onChange={(e) =>
+                      setSelectedExercises(
+                        typeof e.target.value === "string"
+                          ? e.target.value.split(",")
+                          : e.target.value
+                      )
+                    }
+                  >
+                    {allExercises.map((ex) => (
+                      <MenuItem key={ex.id} value={ex.id}>
+                        {ex.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Box>
 
-              {/* ✅ Agrega debajo de select de ejercicios */}
-              <Box>
+              {/* ✅ Select de sexo mejorado */}
+              <FormControl fullWidth>
+                <InputLabel>Sexo</InputLabel>
                 <Select
-                  fullWidth
                   label="Sexo"
                   value={selectedSexo}
                   onChange={(e) => setSelectedSexo(e.target.value)}
-                  displayEmpty
                 >
                   <MenuItem value="">Todos los sexos</MenuItem>
-                  <MenuItem value="H">Masculino</MenuItem>
-                  <MenuItem value="M">Femenino</MenuItem>
+                  <MenuItem value="H">HOMBRE</MenuItem>
+                  <MenuItem value="M">MUJER</MenuItem>
                 </Select>
-              </Box>
+              </FormControl>
 
-              <TextField
-                select
-                label="Grado"
-                value={selectedGrado}
-                onChange={(e) => setSelectedGrado(e.target.value)}
-                fullWidth
-              >
-                <MenuItem value="">Todos los grados</MenuItem>
-                <MenuItem value="1">Grado 1</MenuItem>
-                <MenuItem value="2">Grado 2</MenuItem>
-                <MenuItem value="3">Grado 3</MenuItem>
-              </TextField>
+              {/* ✅ Select de grado - ya estaba bien, pero mejoramos consistencia */}
+              <FormControl fullWidth>
+                <InputLabel>Grado</InputLabel>
+                <Select
+                  label="Grado"
+                  value={selectedGrado}
+                  onChange={(e) => setSelectedGrado(e.target.value)}
+                >
+                  <MenuItem value="">Todos los grados</MenuItem>
+                  <MenuItem value="1">Grado 1</MenuItem>
+                  <MenuItem value="2">Grado 2</MenuItem>
+                  <MenuItem value="3">Grado 3</MenuItem>
+                </Select>
+              </FormControl>
 
               {/*<FormControlLabel
                 control={

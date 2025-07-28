@@ -40,13 +40,11 @@ export const ExerciseSelector = ({
   return (
     <Box>
       <FormControl fullWidth>
-        <InputLabel id="exercise-select-label">
-          Selecciona un ejercicio
-        </InputLabel>
+        <InputLabel id="exercise-select-label">Agregue un ejercicio</InputLabel>
         <Select
           labelId="exercise-select-label"
           value={localSelected}
-          label="Selecciona un ejercicio"
+          label="Agregue un ejercicio"
           onChange={handleChange}
           sx={{ minWidth: 260 }}
         >

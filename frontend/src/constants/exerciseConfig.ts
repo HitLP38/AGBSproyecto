@@ -1,4 +1,4 @@
-export type ExerciseInputType = "time" | "integer";
+export type ExerciseInputType = "time" | "integer" | "seconds" | "swim-time"; // ✅ añadido "swim-time"
 
 export interface ExerciseVisualConfig {
   id: string;
@@ -32,10 +32,10 @@ export const exerciseConfig: ExerciseVisualConfig[] = [
   {
     id: "50m-lisos",
     name: "50 m Lisos",
-    inputType: "time",
+    inputType: "seconds", // ✅ segundos con decimales
     displayFormat: "Tiempo en segundos",
     min: 5,
-    max: 30,
+    max: 15,
     defaultValue: 10,
   },
   {
@@ -43,15 +43,15 @@ export const exerciseConfig: ExerciseVisualConfig[] = [
     name: "1000 m",
     inputType: "time",
     displayFormat: "Tiempo (minutos y segundos)",
-    min: 2 * 60, // 2 minutos
-    max: 10 * 60, // 10 minutos
-    defaultValue: 4 * 60 + 30, // 4:30
+    min: 2 * 60,
+    max: 10 * 60,
+    defaultValue: 4 * 60 + 30,
   },
   {
     id: "natacion-50m",
     name: "Natación 50 m",
-    inputType: "time",
-    displayFormat: "Tiempo (segundos / min y seg)",
+    inputType: "swim-time", // ✅ personalizado: minutos, segundos, décimas
+    displayFormat: "Tiempo (minutos, segundos y décimas)",
     min: 20,
     max: 120,
     defaultValue: 45,
@@ -61,8 +61,8 @@ export const exerciseConfig: ExerciseVisualConfig[] = [
     name: "6 KM",
     inputType: "time",
     displayFormat: "Tiempo (minutos)",
-    min: 15 * 60, // 15 minutos
-    max: 35 * 60, // 35 minutos
-    defaultValue: 25 * 60, // 25:00
+    min: 15 * 60,
+    max: 35 * 60,
+    defaultValue: 25 * 60,
   },
 ];

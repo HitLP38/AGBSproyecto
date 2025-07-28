@@ -16,7 +16,7 @@ import {
 import { useExerciseStore } from "@/store/useExerciseStore";
 import { useNavigationStore } from "@/store/navigationStore";
 import { useResultStore } from "@/store/resultStore";
-import { useResultPreviewStore } from "@/store/resultPreviewStore";
+import { useResultPreviewStore, PreviewItem } from "@/store/resultPreviewStore";
 import { useEffect, useState } from "react";
 import { exercises } from "@/domain/exercise/data/exercises";
 import { useUser, useAuth } from "@clerk/clerk-react";
@@ -78,10 +78,14 @@ export const ResultsView = () => {
   };
 
   const handleCalculate = async () => {
+    const ejerciciosTiempo = ["6Km", "1000m"]; // solo mm:ss
+    const ejerciciosSegundos = ["50m-lisos"]; // segundos con centésimas
+    const ejerciciosNatacion = ["natacion-50m"]; // minutos, segundos, décimas
+
     const allFilled = selected.every((id) => {
       const value = formData[id];
       if (!value || value.trim() === "") return false;
-      const ejerciciosTiempo = ["6Km", "1000m", "natacion-50m"];
+
       if (ejerciciosTiempo.includes(id)) {
         if (value.includes(":")) {
           const [min, seg] = value.split(":");
@@ -89,6 +93,12 @@ export const ResultsView = () => {
         }
         return !isNaN(Number(value)) && Number(value) > 0;
       }
+
+      if (ejerciciosSegundos.includes(id)) {
+        return !isNaN(Number(value)) && Number(value) > 0;
+      }
+
+      // Otros ejercicios (reps, etc.)
       return !isNaN(Number(value)) && Number(value) > 0;
     });
 
@@ -104,16 +114,27 @@ export const ResultsView = () => {
     const previewPromises = selected.map(async (id) => {
       const ex = exercises.find((e) => e.id === id)!;
       const rawStringValue = formData[id];
-      const ejerciciosTiempo = ["6Km", "1000m", "natacion-50m"];
-      const rawValue = ejerciciosTiempo.includes(id)
-        ? convertirTiempoANumero(rawStringValue)
-        : Number(rawStringValue);
+
+      let rawValue: number;
+
+      if (ejerciciosTiempo.includes(id)) {
+        rawValue = convertirTiempoANumero(rawStringValue); // mm:ss -> float
+      } else if (ejerciciosSegundos.includes(id)) {
+        rawValue = parseFloat(rawStringValue); // "7.30" -> 7.3
+      } else if (ejerciciosNatacion.includes(id)) {
+        rawValue = parseFloat(rawStringValue); // "0.753" -> 0.753 ✅
+      } else {
+        rawValue = Number(rawStringValue);
+      }
+
       const value = normalizarMarca(id, rawValue);
       const score = await getScoreFromBackend(id, value, sexo, grado);
+
       return {
         exercise_id: id,
         exercise_name: ex.name,
-        value,
+        value, // visual
+        rawValue, // nuevo campo para backend
         score,
         maxValue: ex.maxValue,
         maxScore: ex.maxScore,
@@ -124,7 +145,8 @@ export const ResultsView = () => {
       };
     });
 
-    const previewData = await Promise.all(previewPromises);
+    const previewData = (await Promise.all(previewPromises)) as PreviewItem[];
+
     setData(previewData);
     setReadyToPreview(true);
     setError(false);
@@ -168,8 +190,8 @@ export const ResultsView = () => {
           onChange={(e) => setSexo(e.target.value)}
           sx={{ minWidth: 160 }}
         >
-          <MenuItem value="H">Masculino</MenuItem>
-          <MenuItem value="M">Femenino</MenuItem>
+          <MenuItem value="H">HOMBRE</MenuItem>
+          <MenuItem value="M">MUJER</MenuItem>
         </TextField>
 
         <TextField

@@ -1,16 +1,8 @@
-"""Rutas principales de la API"""
-
-# 📄 backend/app/api/routes.py
-
+# ✅ backend/app/api/routes.py
 from fastapi import APIRouter
-
-# ✅ Corrección: importamos el router correcto
 from app.api.results import router as results_router
-from app.api.api_v1.endpoints.score import router as score_router
+from app.api.api_v1.routes import router as api_v1_router
 
 router = APIRouter()
-
-# ✅ Agregamos los routers con prefijo
 router.include_router(results_router, prefix="/results", tags=["results"])
-router.include_router(score_router, prefix="/score", tags=["score"])
-
+router.include_router(api_v1_router, prefix="/api", tags=["api-v1"])

@@ -1,9 +1,9 @@
-//src/infra/api/resultsApi.ts
+// src/infra/api/resultsApi.ts
 const API_URL = import.meta.env.VITE_API_URL;
 
 export interface ResultInput {
   exercise_id: string;
-  value: number | string;
+  value: number | string; // aún lo aceptamos como entrada
   score: number;
   timestamp: string;
   user_id: string;
@@ -15,23 +15,50 @@ export interface ResultResponse extends ResultInput {
   id: string;
 }
 
-// ✅ POST /results
+// ✅ POST /results — GUARDAR RESULTADO
 export async function saveResult(
   input: ResultInput,
   token: string
 ): Promise<ResultResponse> {
+  // ⚠️ Convertimos string numérico como "2:49" a número antes de enviar
+  let parsedValue: number;
+
+  if (typeof input.value === "string") {
+    if (input.value.includes(":")) {
+      // Es del tipo "mm:ss", convertirlo
+      const [min, sec] = input.value.split(":").map(Number);
+      parsedValue = min + sec / 60;
+    } else {
+      parsedValue = parseFloat(input.value);
+    }
+  } else {
+    parsedValue = input.value;
+  }
+
+  const body = {
+    exercise_id: input.exercise_id,
+    value: parsedValue, // ✅ Enviamos como float limpio
+    score: input.score,
+    timestamp: input.timestamp,
+    user_id: input.user_id,
+    sexo: input.sexo,
+    grado: input.grado,
+  };
+
   const res = await fetch(`${API_URL}/results`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(input),
+    body: JSON.stringify(body),
   });
+
   if (!res.ok) {
     const errorMessage = await res.text();
     throw new Error(`Error al guardar resultado: ${errorMessage}`);
   }
+
   return await res.json();
 }
 
@@ -46,10 +73,12 @@ export async function getResultsByUser(
       Authorization: `Bearer ${token}`,
     },
   });
+
   if (!res.ok) {
     const errorMessage = await res.text();
     throw new Error(`Error al obtener resultados: ${errorMessage}`);
   }
+
   return await res.json();
 }
 
@@ -62,9 +91,9 @@ export async function getScoreFromBackend(
 ): Promise<number> {
   const payload = {
     exercise_id: exerciseId,
-    marca: value.toString(), // 👈 asegúrate de que sea string
+    marca: value.toString(), // 👈 el backend espera string aquí
     sexo: sexo,
-    grado: parseInt(grado, 10), // 👈 aseguramos que sea número
+    grado: parseInt(grado, 10),
   };
 
   const res = await fetch(`${API_URL}/score/`, {
@@ -82,16 +111,14 @@ export async function getScoreFromBackend(
 
   const json = await res.json();
 
-  // Asegúrate que tu backend devuelva directamente un número. Si devuelve un objeto, ajusta esta línea:
   return typeof json === "number" ? json : json.puntaje;
 }
 
-// POST /notes/calculate_grade_from_selection —
+// ✅ POST /notes/calculate_grade_from_selection —
 export async function calculateGradeFromSelection(
   scores: number[],
   token: string
 ): Promise<{ mensaje: string; puntaje_total: number; nota_final: number }> {
-
   const res = await fetch(`${API_URL}/notes/calculate_grade_from_selection`, {
     method: "POST",
     headers: {

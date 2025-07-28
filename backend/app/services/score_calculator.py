@@ -28,9 +28,9 @@ def get_score_by_marca(
 
     # === 1. Normalizar sexo si viene como texto completo ===
     sexo = sexo.upper().strip()
-    if sexo == "MASCULINO":
+    if sexo == "HOMBRE":
         sexo = "H"
-    elif sexo == "FEMENINO":
+    elif sexo == "MUJER":
         sexo = "M"
 
     # ✅ 2. Asegurar que grado sea un número entero
