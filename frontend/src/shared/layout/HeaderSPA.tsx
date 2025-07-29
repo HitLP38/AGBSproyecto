@@ -47,15 +47,40 @@ export const HeaderSPA = () => {
       <Toolbar
         sx={{
           justifyContent: "space-between",
-          backgroundColor: "#F9FAFA",
-          color: "#2E3E50",
+          backgroundColor: isMobile ? "#2E3E50" : "#F9FAFA",
+          color: isMobile ? "#F9FAFA" : "#2E3E50",
         }}
       >
         <Stack direction="row" alignItems="center" spacing={1}>
-          <img src={logo} alt="logo" style={{ height: 32 }} />
-          <Typography variant="h6" fontWeight={600}>
-            RetoAGBS
-          </Typography>
+          <Box
+            onClick={() => setView("home")}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.05)",
+                opacity: 0.8,
+              },
+            }}
+          >
+            <img 
+              src={isMobile ? "/logos/logo.avif" : logo} 
+              alt="logo" 
+              style={{ height: 32 }} 
+            />
+            <Typography 
+              variant="h6" 
+              fontWeight={600}
+              sx={{
+                color: isMobile ? "#F9FAFA" : "#2E3E50",
+              }}
+            >
+              RetoAGBS
+            </Typography>
+          </Box>
         </Stack>
 
         <Stack direction="row" alignItems="center" spacing={1}>
@@ -82,6 +107,9 @@ export const HeaderSPA = () => {
               <AnimatedIconButton
                 tooltip="Iniciar sesión"
                 icon={<AccountCircle />}
+                sx={{
+                  color: isMobile ? "#F9FAFA" : "#2E3E50",
+                }}
               />
             </SignInButton>
           ) : (
@@ -123,13 +151,6 @@ export const HeaderSPA = () => {
             Home
           </Button>
           <Button
-            startIcon={<BarChart />}
-            variant={currentView === "dashboard" ? "contained" : "text"}
-            onClick={() => setView("dashboard")}
-          >
-            Dashboard
-          </Button>
-          <Button
             startIcon={<FitnessCenter />}
             variant={
               currentView === (isMobile ? "results" : "exercises")
@@ -140,6 +161,14 @@ export const HeaderSPA = () => {
           >
             Ejercicios
           </Button>
+          <Button
+            startIcon={<BarChart />}
+            variant={currentView === "dashboard" ? "contained" : "text"}
+            onClick={() => setView("dashboard")}
+          >
+            Dashboard
+          </Button>
+          
 
           <Button
             startIcon={<History />}

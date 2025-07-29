@@ -23,7 +23,7 @@ import { useUser, useAuth } from "@clerk/clerk-react";
 import { ResultPreviewTable } from "./components/ResultPreviewTable";
 import { getScoreFromBackend } from "@/infra/api/resultsApi";
 import { ExerciseSelector } from "./components/ExerciseSelector";
-import { ExerciseDisplay } from "./components/ExerciseDisplay";
+import { ExerciseSlider } from "./components/ExerciseSlider";
 
 function normalizarMarca(exercise_id: string, valor: number | string): string {
   // ✅ Solo estos ejercicios van en formato mm:ss
@@ -265,16 +265,11 @@ export const ResultsView = () => {
         </Box>
       )}
 
-      <Box mt={4} display="flex" flexDirection="column" gap={3}>
-        {selected.map((id) => (
-          <ExerciseDisplay
-            key={id}
-            selectedId={id}
-            value={formData[id] ?? ""}
-            onChange={(val) => handleChange(id, val)}
-          />
-        ))}
-      </Box>
+      <ExerciseSlider
+        selected={selected}
+        formData={formData}
+        handleChange={handleChange}
+      />
 
       {selected.length > 0 && !readyToPreview && (
         <Box textAlign="center" mt={4}>
