@@ -18,7 +18,7 @@ export const ChartBar = ({ data, color = "#2E3E50" }: ChartBarProps) => (
     <BarChart data={data}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />
-      <YAxis domain={[0, 20]} />
+      <YAxis domain={[0, 40]} />
       <Tooltip />
       <Bar dataKey="score" fill={color} />
     </BarChart>

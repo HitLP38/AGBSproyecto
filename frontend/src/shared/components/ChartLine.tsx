@@ -18,7 +18,7 @@ export const ChartLine = ({ data, color = "#2E3E50" }: ChartLineProps) => (
     <LineChart data={data}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="date" />
-      <YAxis domain={[0, 20]} />
+      <YAxis domain={[0, 40]} />
       <Tooltip />
       <Line type="monotone" dataKey="score" stroke={color} strokeWidth={3} />
     </LineChart>

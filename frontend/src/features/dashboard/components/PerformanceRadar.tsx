@@ -127,7 +127,7 @@ export const PerformanceRadar = ({ results }: Props) => {
               tick={{ fontSize: isMobile ? 10 : 12, fill: "#666" }}
             />
             <PolarRadiusAxis
-              domain={[0, 20]}
+              domain={[0, 40]}
               tick={{ fontSize: 10, fill: "#999" }}
               tickCount={5}
             />

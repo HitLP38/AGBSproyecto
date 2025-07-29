@@ -29,7 +29,7 @@ export const SummaryCards = ({ results }: Props) => {
   const cards = [
     {
       label: "Puntaje Promedio",
-      value: `${avg} / 20`,
+      value: `${avg} / 40`,
     },
     {
       label: "Registros Totales",
@@ -46,7 +46,7 @@ export const SummaryCards = ({ results }: Props) => {
     },
     {
       label: "Mejor Puntaje",
-      value: best ? `${best.score} / 20` : "-",
+      value: best ? `${best.score} / 40` : "-",
     },
   ];
 

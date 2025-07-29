@@ -14,7 +14,7 @@ export const exercises: Exercise[] = [
     name: "Salto Vertical",
     type: "reps",
     maxValue: 75, // cm para 20 pts (referencia masculina)
-    maxScore: 20,
+    maxScore: 40,
   },
   {
     // ✅ CORREGIDO: Cambié de "extensiones-brazos" a "extensiones-brazo"
@@ -22,28 +22,28 @@ export const exercises: Exercise[] = [
     name: "Extensiones de Brazos",
     type: "reps",
     maxValue: 60, // repeticiones para 20 pts (ejemplo)
-    maxScore: 20,
+    maxScore: 40,
   },
   {
     id: "50m-lisos",
     name: "50 m Lisos",
     type: "time",
     maxValue: 7, // segundos para 20 pts (ejemplo)
-    maxScore: 20,
+    maxScore: 40,
   },
   {
     id: "1000m",
     name: "1000 m",
     type: "time",
     maxValue: 210, // 3 min 30 s para 20 pts
-    maxScore: 20,
+    maxScore: 40,
   },
   {
     id: "natacion-50m",
     name: "Natación 50 m",
     type: "time",
     maxValue: 35, // segundos para 20 pts
-    maxScore: 20,
+    maxScore: 40,
   },
   {
     // ✅ CORREGIDO: Cambié de "6km" a "6Km"
@@ -51,6 +51,6 @@ export const exercises: Exercise[] = [
     name: "6 KM",
     type: "time",
     maxValue: 1320, // 22 minutos para 20 pts
-    maxScore: 20,
+    maxScore: 40,
   },
 ];
