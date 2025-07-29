@@ -694,8 +694,6 @@ Dashboard de Clerk
 
 ---
 
-## 📞 Obtener Ayuda
-
 ### Si algo no funciona:
 
 1. **Revisa los logs** en la terminal

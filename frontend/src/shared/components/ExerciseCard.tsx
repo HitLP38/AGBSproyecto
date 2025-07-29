@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { useExerciseStore } from "@/store/useExerciseStore";
-import { FavoriteToggle } from "./FavoriteToggle";
 
 interface Props {
   id: string;
@@ -44,11 +43,6 @@ export const ExerciseCard = ({ id, name, image }: Props) => {
             <Typography fontWeight={600}>{name}</Typography>
           </CardContent>
         </CardActionArea>
-
-        {/* ❤️ Favoritos */}
-        <Box sx={{ position: "absolute", top: 4, right: 4 }}>
-          <FavoriteToggle exerciseId={id} />
-        </Box>
       </Card>
     </motion.div>
   );
